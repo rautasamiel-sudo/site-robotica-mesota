@@ -1,0 +1,17 @@
+backend:
+  name: github
+  repo: rautasamiel-sudo/site-robotica-mesota
+  branch: main
+
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  - name: "pagini"
+    label: "Setări Site"
+    files:
+      - file: "index.html"
+        name: "index"
+        label: "Pagina Principală"
+        fields:
+          - {label: "Nume Echipă", name: "nume_echipa", widget: "string"}
