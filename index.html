@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echipa de Robotică - CN Dr. Ioan Meșotă Brașov</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'mesota-dark': '#043919',
+                        'mesota-card': 'rgba(255, 255, 255, 0.06)',
+                        'mesota-emerald': '#00873e',
+                        'mesota-hover': '#00ab4f',
+                        'mesota-accent': '#4ade80'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #043919;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .btn-emerald {
+            background-color: #00873e;
+            color: #ffffff;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-emerald:hover {
+            background-color: #00ab4f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 171, 79, 0.3);
+        }
+
+        .btn-emerald:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .glass-panel {
+            background: rgba(4, 57, 25, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 171, 79, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Gallery */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            cursor: pointer;
+            aspect-ratio: 4 / 3;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+        .gallery-item .gallery-caption {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            background: linear-gradient(to top, rgba(4,57,25,0.95), rgba(4,57,25,0));
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s ease;
+        }
+        .gallery-item:hover .gallery-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @media (hover: none) {
+            .gallery-item .gallery-caption { opacity: 1; transform: none; }
+        }
+
+        /* Robot 3D */
+        .robot-stage { height: 520px; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #06281a; }
+        .robot-stage:fullscreen { height: 100vh; border-radius: 0; }
+        .robot-tool { width: 2.5rem; height: 2.5rem; border-radius: .6rem; background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.12); color: #fff; transition: background .2s; }
+        .robot-tool:hover { background: rgba(0,135,62,.8); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #043919;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00873e;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ab4f;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- NAVIGATOR / HEADER -->
+    <header class="sticky top-0 z-40 glass-panel shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo & Team Name -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-mesota-emerald flex items-center justify-center font-bold text-xl text-white shadow-md">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <span id="site-title-nav" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white block">
+                            Robotică Meșotă
+                        </span>
+                        <span class="text-xs text-mesota-accent font-medium tracking-wider uppercase block">
+                            CN „Dr. Ioan Meșotă” Brașov
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-4">
+                    <a href="#despre" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Despre Noi</a>
+                    <a href="#galerie" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Galerie</a>
+                    <a href="#social" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Social</a>
+                    <a id="nav-donate" href="#doneaza" class="hidden px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Donează</a>
+                    <a href="#echipa" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Echipă</a>
+                    <a id="nav-sponsors" href="#sponsori" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Sponsori</a>
+                    <a id="nav-mentors" href="#mentori" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Mentori</a>
+                    <a href="#proiecte" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Proiecte</a>
+                    <a id="nav-robot" href="#robot" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Robot</a>
+                    <a href="#contact" class="px-3 py-2 text-sm font-semibold text-gray-200 hover:text-white transition">Contact</a>
+                    <button onclick="toggleAdminModal()" class="btn-emerald px-4 py-2 rounded-md font-semibold text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear"></i> Panou Admin
+                    </button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button onclick="toggleAdminModal()" class="btn-emerald p-2 rounded-md text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-user-gear"></i> Admin
+                    </button>
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 rounded-md text-gray-300 hover:text-white hover:bg-emerald-900 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-mesota-dark border-b border-emerald-900/50 px-4 pt-2 pb-4 space-y-2">
+            <a href="#despre" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Despre Noi</a>
+            <a href="#galerie" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Galerie</a>
+            <a href="#social" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Social</a>
+            <a id="nav-donate-m" href="#doneaza" onclick="toggleMobileMenu()" class="hidden px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Donează</a>
+            <a href="#echipa" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Echipă</a>
+            <a id="nav-sponsors-m" href="#sponsori" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Sponsori</a>
+            <a id="nav-mentors-m" href="#mentori" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Mentori</a>
+            <a href="#proiecte" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Proiecte</a>
+            <a id="nav-robot-m" href="#robot" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Robot</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-950">Contact</a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- HERO SECTION -->
+        <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-16">
+            <!-- Background Image with Overlay -->
+            <div id="hero-bg-div" class="absolute inset-0 bg-cover bg-center transition-all duration-700 opacity-25 filter brightness-75 scale-105" 
+                 style="background-image: url('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1600&q=80');">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-b from-mesota-dark/80 via-mesota-dark/95 to-mesota-dark"></div>
+
+            <div class="relative max-w-5xl mx-auto px-4 text-center z-10">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-mesota-accent border border-emerald-500/30 mb-6 uppercase tracking-wider">
+                    <i class="fa-solid fa-microchip"></i> FTC & Science Innovation Club
+                </span>
+                <h1 id="hero-title" class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+                    Inovație și Performanță în Robotică
+                </h1>
+                <p id="hero-subtitle" class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+                    Echipa de robotică a Colegiului Național „Dr. Ioan Meșotă” Brașov proiectează, programează și construiește viitorul tehnologiei pas cu pas.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#proiecte" class="btn-emerald w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rocket"></i> Vezi Proiectele
+                    </a>
+                    <a href="#contact" class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-base bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Contactează-ne
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="despre" class="py-20 relative border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Despre Echipa Noastră</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Pasiune pentru inginerie, programare avansată și lucru în echipă.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass-card p-8 rounded-2xl">
+                        <div class="w-14 h-14 bg-emerald-900/60 rounded-xl flex items-center justify-center text-mesota-accent text-2xl mb-6">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Misiune & Viziune</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            Dezvoltăm soluții inginerești avansate, încurajăm gândirea critică și promovăm domeniile STEM în comunitatea brașoveană.
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-8 rounded-2xl">
+                        <div class="w-14 h-14 bg-emerald-900/60 rounded-xl flex items-center justify-center text-mesota-accent text-2xl mb-6">
+                            <i class="fa-solid fa-gears"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Inginerie & CAD</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            De la schițe 3D în Fusion 360/Onshape până la prelucrarea pieselor din aluminiu și imprimare 3D de înaltă precizie.
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-8 rounded-2xl">
+                        <div class="w-14 h-14 bg-emerald-900/60 rounded-xl flex items-center justify-center text-mesota-accent text-2xl mb-6">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Software & Autonom</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            Algoritmi complecși în Java și C++, procesare de imagine cu OpenCV și sisteme de navigație autonomă bazate pe senzori.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY SECTION -->
+        <section id="galerie" class="py-20 relative bg-emerald-950/20 border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Galerie Foto</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Momente de la competiții, ateliere și pregătiri.</p>
+                </div>
+
+                <!-- Dynamic Gallery Grid -->
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- Gallery rendered via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SOCIAL SECTION -->
+        <section id="social" class="py-20 relative border-t border-emerald-900/40">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Urmărește-ne</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Găsește-ne pe rețelele sociale sau scrie-ne direct.</p>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <a id="social-instagram" href="#" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-3 text-center">
+                        <div class="w-14 h-14 rounded-xl bg-emerald-900/60 flex items-center justify-center text-mesota-accent text-3xl"><i class="fa-brands fa-instagram"></i></div>
+                        <span class="font-bold text-white">Instagram</span>
+                    </a>
+                    <a id="social-facebook" href="#" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-3 text-center">
+                        <div class="w-14 h-14 rounded-xl bg-emerald-900/60 flex items-center justify-center text-mesota-accent text-3xl"><i class="fa-brands fa-facebook-f"></i></div>
+                        <span class="font-bold text-white">Facebook</span>
+                    </a>
+                    <a id="social-tiktok" href="#" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-3 text-center">
+                        <div class="w-14 h-14 rounded-xl bg-emerald-900/60 flex items-center justify-center text-mesota-accent text-3xl"><i class="fa-brands fa-tiktok"></i></div>
+                        <span class="font-bold text-white">TikTok</span>
+                    </a>
+                    <a id="social-gmail" href="#" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-3 text-center">
+                        <div class="w-14 h-14 rounded-xl bg-emerald-900/60 flex items-center justify-center text-mesota-accent text-3xl"><i class="fa-solid fa-envelope"></i></div>
+                        <span class="font-bold text-white">Gmail</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- DONATE SECTION (afișată doar dacă e activată din admin) -->
+        <section id="doneaza" class="hidden py-20 relative bg-emerald-950/20 border-t border-emerald-900/40">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-card rounded-3xl p-8 sm:p-12 text-center">
+                    <div class="w-16 h-16 bg-mesota-emerald rounded-2xl flex items-center justify-center text-white text-3xl mx-auto mb-6 shadow-lg">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <h2 id="donate-title" class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Susține echipa</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full mb-6"></div>
+                    <p id="donate-text" class="text-gray-300 text-lg leading-relaxed mb-8"></p>
+                    <a id="donate-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn-emerald inline-flex items-center justify-center gap-3 px-10 py-4 rounded-xl font-bold text-lg shadow-lg">
+                        <i class="fa-solid fa-credit-card"></i> Donează cu cardul
+                    </a>
+                    <p class="text-gray-400 text-xs mt-6">
+                        <i class="fa-solid fa-lock text-mesota-accent"></i>
+                        Alegi singur suma pe pagina securizată a procesatorului de plăți. Datele cardului nu trec prin acest site.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEAM MEMBERS SECTION -->
+        <section id="echipa" class="py-20 relative border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Membrii Echipei</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Elevii și mentorii dedicați performanței în robotică.</p>
+                </div>
+
+                <!-- Dynamic Members Grid -->
+                <div id="members-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Members rendered via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SPONSORS SECTION -->
+        <section id="sponsori" class="py-20 relative bg-emerald-950/20 border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Sponsorii Noștri</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Mulțumim partenerilor care cred în echipa noastră.</p>
+                </div>
+                <div id="sponsors-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Sponsors rendered via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- MENTORS SECTION -->
+        <section id="mentori" class="py-20 relative border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Mentorii Noștri</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Profesorii și specialiștii care ne îndrumă pas cu pas.</p>
+                </div>
+                <div id="mentors-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Mentors rendered via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECTS SECTION -->
+        <section id="proiecte" class="py-20 relative bg-emerald-950/20 border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Proiectele Noastre</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Roboți de competiție și inovații tehnologice.</p>
+                </div>
+
+                <!-- Dynamic Projects Grid -->
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Projects rendered via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ROBOT SECTION -->
+        <section id="robot" class="py-20 relative border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Robot</h2>
+                    <div class="w-20 h-1 bg-mesota-emerald mx-auto rounded-full"></div>
+                    <p class="text-gray-300 mt-4 text-lg">Rotește, mărește și explorează robotul în 3D.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div id="robot-viewer-wrap" class="robot-stage relative">
+                            <div id="robot-viewer" class="absolute inset-0 cursor-grab"></div>
+                            <div class="absolute top-3 right-3 flex gap-2 z-10">
+                                <button onclick="robotCmd('reset')" title="Resetează camera" class="robot-tool"><i class="fa-solid fa-crosshairs"></i></button>
+                                <button onclick="robotCmd('rotate')" title="Rotire automată" class="robot-tool"><i class="fa-solid fa-rotate"></i></button>
+                                <button onclick="robotCmd('wire')" title="Wireframe" class="robot-tool"><i class="fa-solid fa-vector-square"></i></button>
+                                <button onclick="robotCmd('full')" title="Ecran complet" class="robot-tool"><i class="fa-solid fa-expand"></i></button>
+                            </div>
+                            <p class="absolute bottom-3 left-4 text-xs text-gray-300/80 pointer-events-none z-10">
+                                <i class="fa-solid fa-hand-pointer"></i> Trage = rotire · Scroll = zoom · Click dreapta = mutare
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl p-8 border border-white/10 bg-white/5 flex flex-col">
+                        <h3 id="robot-name" class="text-2xl font-bold text-white mb-3"></h3>
+                        <p id="robot-desc" class="text-gray-300 text-sm leading-relaxed mb-6"></p>
+                        <dl id="robot-specs" class="mb-6"></dl>
+                        <div class="mt-auto flex flex-wrap gap-3">
+                            <a id="robot-fusion-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden btn-emerald flex-1 min-w-[9rem] px-5 py-3 rounded-xl font-bold text-sm items-center justify-center gap-2">
+                                <i class="fa-solid fa-cube"></i> Deschide în Fusion 360
+                            </a>
+                            <a id="robot-github-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden flex-1 min-w-[9rem] px-5 py-3 rounded-xl font-bold text-sm bg-white/10 hover:bg-white/20 border border-white/20 text-white transition items-center justify-center gap-2">
+                                <i class="fa-brands fa-github"></i> GitHub
+                            </a>
+                            <a id="robot-download-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden flex-1 min-w-[9rem] px-5 py-3 rounded-xl font-bold text-sm bg-white/10 hover:bg-white/20 border border-white/20 text-white transition items-center justify-center gap-2">
+                                <i class="fa-solid fa-download"></i> Descarcă modelul
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT & SPONSOR SECTION -->
+        <section id="contact" class="py-20 relative bg-emerald-950/40 border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">Fii Partenerul Nostru!</h2>
+                        <p class="text-gray-300 mb-8 leading-relaxed">
+                            Susține inovația și tinerii pasionați de tehnologie din Colegiul Național „Dr. Ioan Meșotă”. Căutăm sponsori și parteneri pentru echipamente, imprimante 3D, senzori și deplasări la competiții.
+                        </p>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-mesota-emerald flex items-center justify-center text-white">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-400">Locație</h4>
+                                    <p id="contact-address-display" class="text-white font-medium">Str. Iuliu Maniu 56, Brașov, România</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-mesota-emerald flex items-center justify-center text-white">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-400">Telefon</h4>
+                                    <p id="contact-phone-display" class="text-white font-medium">+40 700 000 000</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-mesota-emerald flex items-center justify-center text-white">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-400">Email Contact</h4>
+                                    <p id="contact-email-display" class="text-white font-medium">robotica@mesota.ro</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-8 rounded-2xl">
+                        <h3 class="text-2xl font-bold text-white mb-6">Trimite un mesaj</h3>
+                        <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-300 mb-1">Nume Complet</label>
+                                <input type="text" id="contact-name-input" required maxlength="100" class="w-full bg-emerald-950/80 border border-emerald-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-mesota-accent" placeholder="Numele tău">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-300 mb-1">Email-ul tău</label>
+                                <input type="email" id="contact-sender-email" required class="w-full bg-emerald-950/80 border border-emerald-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-mesota-accent" placeholder="email@exemplu.ro">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-300 mb-1">Mesaj</label>
+                                <textarea id="contact-message-input" rows="4" required maxlength="1500" class="w-full bg-emerald-950/80 border border-emerald-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-mesota-accent" placeholder="Cum ne poți ajuta sau ce întrebări ai..."></textarea>
+                            </div>
+                            <!-- Câmp-capcană anti-spam (invizibil pentru vizitatori) -->
+                            <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+                                <label>Nu completa acest câmp <input type="text" id="contact-website" tabindex="-1" autocomplete="off"></label>
+                            </div>
+
+                            <button type="submit" id="contact-submit-btn" class="btn-emerald w-full py-3 rounded-lg font-bold text-base flex items-center justify-center gap-2">
+                                <i id="contact-submit-icon" class="fa-solid fa-paper-plane"></i>
+                                <span id="contact-submit-label">Trimite mesajul</span>
+                            </button>
+
+                            <!-- Răspuns vizibil după apăsarea butonului -->
+                            <div id="contact-status" role="status" aria-live="polite" class="hidden"></div>
+
+                            <!-- Variante de rezervă dacă trimiterea automată eșuează -->
+                            <div id="contact-fallback" class="hidden rounded-lg border border-emerald-800 bg-emerald-950/60 p-4 space-y-3">
+                                <p class="text-xs text-gray-300">Mesajul tău a rămas în formular. Îl poți trimite și așa:</p>
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <a id="contact-fallback-gmail" href="#" target="_blank" rel="noopener noreferrer" class="btn-emerald flex-1 text-center px-3 py-2 rounded-lg text-xs font-bold">
+                                        <i class="fa-brands fa-google"></i> Deschide în Gmail
+                                    </a>
+                                    <a id="contact-fallback-mailto" href="#" class="flex-1 text-center px-3 py-2 rounded-lg text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition">
+                                        <i class="fa-solid fa-envelope"></i> Aplicația de email
+                                    </a>
+                                    <button type="button" onclick="copyContactMessage()" class="flex-1 text-center px-3 py-2 rounded-lg text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition">
+                                        <i class="fa-regular fa-copy"></i> Copiază mesajul
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p class="text-gray-400 text-xs">
+                                <i class="fa-solid fa-lock text-mesota-accent"></i>
+                                Mesajul ajunge direct la echipă și este livrat prin serviciul FormSubmit.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-black/40 border-t border-emerald-900/40 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <div class="flex justify-center items-center gap-2 text-xl font-bold text-white">
+                <i class="fa-solid fa-robot text-mesota-accent"></i>
+                <span id="site-title-footer">Robotică Meșotă</span>
+            </div>
+            <p class="text-gray-300 text-xs flex justify-center items-center gap-4">
+                <span><i class="fa-solid fa-phone text-mesota-accent"></i> <span id="footer-phone">+40 700 000 000</span></span>
+                <span><i class="fa-solid fa-envelope text-mesota-accent"></i> <span id="footer-email">robotica@mesota.ro</span></span>
+            </p>
+            <p class="text-gray-400 text-sm">
+                &copy; <span id="year">2026</span> Colegiul Național „Dr. Ioan Meșotă” Brașov. Toate drepturile rezervate.
+            </p>
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4" onclick="closeLightbox()">
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 text-gray-300 hover:text-white text-3xl" aria-label="Închide">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button onclick="event.stopPropagation(); stepLightbox(-1)" class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white text-xl" aria-label="Anterioara">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button onclick="event.stopPropagation(); stepLightbox(1)" class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white text-xl" aria-label="Următoarea">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <figure class="max-w-5xl w-full text-center" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" alt="" class="max-h-[80vh] mx-auto rounded-xl shadow-2xl object-contain">
+            <figcaption id="lightbox-caption" class="mt-4 text-gray-200 text-sm"></figcaption>
+        </figure>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-8 rounded-2xl relative shadow-2xl">
+            <button onclick="toggleAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-mesota-emerald rounded-xl flex items-center justify-center text-white text-xl mx-auto mb-3">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">Autentificare Admin</h3>
+                <p class="text-gray-300 text-xs mt-1">Introduceți parola pentru a edita conținutul site-ului.</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Parolă Administrator</label>
+                    <input type="password" id="admin-pass-input" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-mesota-accent" placeholder="Introduceți parola...">
+                </div>
+                <p id="login-error" class="text-red-400 text-xs hidden">Parolă incorectă! Încercați din nou.</p>
+                <button type="submit" class="btn-emerald w-full py-3 rounded-lg font-bold">
+                    Intră în Panoul de Control
+                </button>
+            </form>
+            <div class="mt-4 pt-4 border-t border-gray-700/50 text-center">
+                <p class="text-xs text-gray-400">Parolă demonstrativă: <span class="text-mesota-accent font-mono font-bold">mesota2026</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL DASHBOARD (FULL OVERLAY) -->
+    <div id="admin-dashboard-modal" class="fixed inset-0 bg-mesota-dark z-50 hidden overflow-y-auto">
+        <header class="glass-panel sticky top-0 z-10 px-6 py-4 flex items-center justify-between border-b border-emerald-900">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 bg-mesota-emerald text-white text-xs font-bold rounded-md uppercase">Mod Administrator</span>
+                <h2 class="text-xl font-bold text-white">CMS Management Site</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="exportDataJSON()" class="px-3 py-2 bg-emerald-900 hover:bg-emerald-800 text-xs font-bold rounded-lg text-white transition flex items-center gap-1">
+                    <i class="fa-solid fa-download"></i> Export JSON
+                </button>
+                <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-xs font-bold rounded-lg text-white transition">
+                    Ieșire din Admin
+                </button>
+            </div>
+        </header>
+
+        <div class="max-w-6xl mx-auto p-6 space-y-12 pb-24">
+            
+            <!-- GENERAL SITE SETTINGS -->
+            <div class="glass-card p-6 rounded-2xl">
+                <h3 class="text-xl font-bold text-mesota-accent mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> Setări Generale, Contact & Securitate
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Nume Echipă (Header / Footer)</label>
+                        <input type="text" id="edit-site-title" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Imagine Fundal Hero (URL)</label>
+                        <input type="text" id="edit-hero-bg" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Număr de Telefon Contact</label>
+                        <input type="text" id="edit-contact-phone" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="+40 7xx xxx xxx">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Adresă Gmail pentru Mesaje</label>
+                        <input type="email" id="edit-contact-email" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="echipa@gmail.com">
+                        <button type="button" onclick="sendTestContactMessage()" class="mt-2 px-3 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-xs font-semibold rounded text-white flex items-center gap-1">
+                            <i class="fa-solid fa-paper-plane"></i> Trimite mesaj de test / activează adresa
+                        </button>
+                        <p class="text-xs text-gray-400 mt-1">După ce schimbi adresa: salvează, apoi apasă butonul de test și confirmă emailul primit de la FormSubmit (verifică și Spam). Doar după aceea formularul de pe site trimite automat către adresa nouă.</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Locație / Adresă (secțiunea Contact)</label>
+                        <input type="text" id="edit-address" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="Str. Exemplu 1, Brașov, România">
+                    </div>
+                    <div class="md:col-span-2 border-t border-emerald-800/50 pt-4">
+                        <p class="text-xs font-semibold text-mesota-accent mb-1">Linkuri Social Media (secțiunea „Urmărește-ne")</p>
+                        <p class="text-xs text-gray-400">Lasă un câmp gol pentru a ascunde butonul respectiv. Butonul Gmail folosește adresa de mai sus.</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Link Instagram</label>
+                        <input type="text" id="edit-instagram" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="https://www.instagram.com/...">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Link Facebook</label>
+                        <input type="text" id="edit-facebook" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="https://www.facebook.com/...">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Link TikTok</label>
+                        <input type="text" id="edit-tiktok" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="https://www.tiktok.com/@...">
+                    </div>
+                    <div class="md:col-span-2 border-t border-emerald-800/50 pt-4">
+                        <label class="block text-xs font-semibold text-mesota-accent mb-1">Nouă Parolă Administrator</label>
+                        <div class="relative">
+                            <input type="password" id="edit-admin-pass" autocomplete="new-password" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg pl-4 pr-12 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="Introduceți o nouă parolă de acces">
+                            <button type="button" id="toggle-admin-pass" onclick="toggleAdminPassVisibility()" class="absolute inset-y-0 right-0 px-4 text-gray-400 hover:text-white" title="Arată / ascunde parola" aria-label="Arată sau ascunde parola">
+                                <i id="toggle-admin-pass-icon" class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-mesota-accent mb-1">Număr de telefon pentru recuperarea parolei</label>
+                        <input type="tel" id="edit-recovery-phone" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="+40 7xx xxx xxx">
+                        <p class="text-xs text-gray-400 mt-1">Numărul se salvează în setări, dar nu trimite SMS-uri: pentru asta ar fi nevoie de un server.</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Titlu Principal (Hero Title)</label>
+                        <input type="text" id="edit-hero-title" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Subtitlu Hero</label>
+                        <textarea id="edit-hero-subtitle" rows="2" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent"></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="saveGeneralSettings()" class="btn-emerald px-6 py-2.5 rounded-lg font-bold text-sm">
+                        Salvează Setările Generale & Parola
+                    </button>
+                </div>
+            </div>
+
+            <!-- DONATIONS MANAGEMENT -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 gap-3 flex-wrap">
+                    <h3 class="text-xl font-bold text-mesota-accent flex items-center gap-2">
+                        <i class="fa-solid fa-heart"></i> Gestiune Donații
+                        <span id="donate-status-badge" class="text-xs font-semibold rounded-full px-3 py-1 bg-red-900/60 text-red-200 border border-red-700">Dezactivată</span>
+                    </h3>
+                    <label class="flex items-center gap-3 cursor-pointer select-none">
+                        <span class="text-xs font-semibold text-gray-300">Secțiune activă pe site</span>
+                        <input type="checkbox" id="edit-donate-enabled" onchange="toggleDonation(this.checked)" class="w-5 h-5 accent-emerald-500">
+                    </label>
+                </div>
+                <p class="text-xs text-gray-400 mb-4">
+                    Dezactivează secțiunea când schimbi contul sau cardul pe care intră banii, apoi pune noul link și reactiv-o.
+                    Cardul propriu-zis se configurează la procesatorul de plăți (Stripe, Revolut, PayPal etc.), nu aici.
+                </p>
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Link de plată (https://...)</label>
+                        <input type="text" id="edit-donate-link" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent" placeholder="ex: https://buy.stripe.com/...">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Titlu secțiune</label>
+                        <input type="text" id="edit-donate-title" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Text de prezentare</label>
+                        <textarea id="edit-donate-text" rows="3" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent"></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="saveDonationSettings()" class="btn-emerald px-6 py-2.5 rounded-lg font-bold text-sm">
+                        Salvează Setările de Donații
+                    </button>
+                </div>
+            </div>
+
+            <!-- GALLERY MANAGEMENT -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 gap-3 flex-wrap">
+                    <h3 class="text-xl font-bold text-mesota-accent flex items-center gap-2">
+                        <i class="fa-solid fa-images"></i> Gestiune Galerie
+                        <span id="gallery-counter" class="text-xs font-semibold text-gray-300 bg-emerald-950 border border-emerald-800 rounded-full px-3 py-1">0 / 20</span>
+                    </h3>
+                    <button id="add-gallery-btn" onclick="openGalleryModal()" class="btn-emerald px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Adaugă Poză
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mb-4">Maximum 20 de poze. Folosește săgețile pentru a schimba ordinea. Pozele încărcate de pe calculator sunt redimensionate automat.</p>
+
+                <div id="admin-gallery-list" class="space-y-4">
+                    <!-- Dynamic Gallery Rows for Admin -->
+                </div>
+            </div>
+
+            <!-- TEAM MEMBERS MANAGEMENT -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-mesota-accent flex items-center gap-2">
+                        <i class="fa-solid fa-users"></i> Gestiune Membri Echipă
+                    </h3>
+                    <button onclick="openMemberModal()" class="btn-emerald px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Adaugă Membru
+                    </button>
+                </div>
+
+                <div id="admin-members-list" class="space-y-4">
+                    <!-- Dynamic Member Rows for Admin -->
+                </div>
+            </div>
+
+            <!-- SPONSORS MANAGEMENT -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 gap-3 flex-wrap">
+                    <h3 class="text-xl font-bold text-mesota-accent flex items-center gap-2">
+                        <i class="fa-solid fa-handshake"></i> Gestiune Sponsori
+                    </h3>
+                    <button onclick="openEntryModal('sponsors')" class="btn-emerald px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Adaugă Sponsor
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mb-4">Fiecare sponsor are logo/imagine, nume, descriere și (opțional) link către site. Folosește săgețile pentru ordine. Dacă nu ai niciun sponsor, secțiunea se ascunde automat.</p>
+                <div id="admin-sponsors-list" class="space-y-4">
+                </div>
+            </div>
+
+            <!-- MENTORS MANAGEMENT -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 gap-3 flex-wrap">
+                    <h3 class="text-xl font-bold text-mesota-accent flex items-center gap-2">
+                        <i class="fa-solid fa-chalkboard-user"></i> Gestiune Mentori
+                    </h3>
+                    <button onclick="openEntryModal('mentors')" class="btn-emerald px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Adaugă Mentor
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mb-4">Fiecare mentor are fotografie, nume, rol și descriere. Folosește săgețile pentru ordine. Dacă nu ai niciun mentor, secțiunea se ascunde automat.</p>
+                <div id="admin-mentors-list" class="space-y-4">
+                </div>
+            </div>
+
+            <!-- PROJECTS MANAGEMENT -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-mesota-accent flex items-center gap-2">
+                        <i class="fa-solid fa-diagram-project"></i> Gestiune Proiecte
+                    </h3>
+                    <button onclick="openProjectModal()" class="btn-emerald px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Adaugă Proiect
+                    </button>
+                </div>
+
+                <div id="admin-projects-list" class="space-y-4">
+                    <!-- Dynamic Project Rows for Admin -->
+                </div>
+            </div>
+
+            <!-- ROBOT MANAGEMENT -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 gap-3 flex-wrap">
+                    <h3 class="text-xl font-bold text-mesota-accent flex items-center gap-2">
+                        <i class="fa-solid fa-robot"></i> Gestiune Robot
+                    </h3>
+                    <label class="flex items-center gap-3 cursor-pointer select-none">
+                        <span class="text-xs font-semibold text-gray-300">Secțiune activă pe site</span>
+                        <input type="checkbox" id="rb-enabled" class="w-5 h-5 accent-emerald-500">
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div id="rb-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Nume robot</label>
+                            <input type="text" id="rb-name" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Descriere</label>
+                            <textarea id="rb-desc" rows="3" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Specificații (una pe linie, format „Cheie: valoare")</label>
+                            <textarea id="rb-specs" rows="4" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Sursa modelului 3D</label>
+                            <select id="rb-source" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                                <option value="default">Robot implicit (editabil mai jos)</option>
+                                <option value="url">Model de la un URL (GLB / GLTF / STL / OBJ)</option>
+                                <option value="file">Fișier încărcat de pe calculator</option>
+                            </select>
+                        </div>
+
+                        <div id="rb-box-url" class="hidden">
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">URL model (trebuie să permită CORS)</label>
+                            <input type="text" id="rb-url" placeholder="https://.../robot.glb" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                        </div>
+
+                        <div id="rb-box-file" class="hidden">
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Fișier model (.glb, .gltf, .stl, .obj)</label>
+                            <input type="file" id="rb-file" accept=".glb,.gltf,.stl,.obj" onchange="robotHandleFile(event)" class="w-full text-xs text-gray-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-mesota-emerald file:text-white file:font-semibold hover:file:bg-mesota-hover">
+                            <p id="rb-file-status" class="text-xs text-mesota-accent mt-1"></p>
+                            <p class="text-xs text-gray-400 mt-1">Fișierul se păstrează doar în acest browser și nu intră în „Export JSON".</p>
+                        </div>
+
+                        <div id="rb-box-model" class="hidden grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Culoare model (STL/OBJ)</label>
+                                <input type="color" id="rb-modelcolor" class="w-full h-10 bg-emerald-950 border border-emerald-800 rounded-lg cursor-pointer">
+                            </div>
+                            <label class="flex items-end gap-2 pb-2 text-xs font-semibold text-gray-300 cursor-pointer">
+                                <input type="checkbox" id="rb-zup" class="w-5 h-5 accent-emerald-500"> Model Z-up (rotește −90°)
+                            </label>
+                        </div>
+
+                        <div id="rb-box-default" class="space-y-4 border border-emerald-800/60 rounded-xl p-4">
+                            <p class="text-xs font-semibold text-mesota-accent">Editor robot implicit</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div><label class="block text-[11px] text-gray-300 mb-1">Șasiu</label><input type="color" id="rb-c-chassis" class="w-full h-9 bg-emerald-950 border border-emerald-800 rounded cursor-pointer"></div>
+                                <div><label class="block text-[11px] text-gray-300 mb-1">Roți</label><input type="color" id="rb-c-wheels" class="w-full h-9 bg-emerald-950 border border-emerald-800 rounded cursor-pointer"></div>
+                                <div><label class="block text-[11px] text-gray-300 mb-1">Braț</label><input type="color" id="rb-c-arm" class="w-full h-9 bg-emerald-950 border border-emerald-800 rounded cursor-pointer"></div>
+                                <div><label class="block text-[11px] text-gray-300 mb-1">Accent</label><input type="color" id="rb-c-accent" class="w-full h-9 bg-emerald-950 border border-emerald-800 rounded cursor-pointer"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[11px] text-gray-300 mb-1">Lățime șasiu</label><input type="range" id="rb-width" min="3" max="7" step="0.1" class="w-full accent-emerald-500"></div>
+                                <div><label class="block text-[11px] text-gray-300 mb-1">Lungime șasiu</label><input type="range" id="rb-length" min="3" max="7" step="0.1" class="w-full accent-emerald-500"></div>
+                            </div>
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2 text-xs font-semibold text-gray-300 cursor-pointer"><input type="checkbox" id="rb-arm" class="w-5 h-5 accent-emerald-500"> Braț</label>
+                                <label class="flex items-center gap-2 text-xs font-semibold text-gray-300 cursor-pointer"><input type="checkbox" id="rb-intake" class="w-5 h-5 accent-emerald-500"> Intake</label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Culoare fundal</label>
+                                <input type="color" id="rb-bg" class="w-full h-10 bg-emerald-950 border border-emerald-800 rounded-lg cursor-pointer">
+                            </div>
+                            <label class="flex items-end gap-2 pb-2 text-xs font-semibold text-gray-300 cursor-pointer">
+                                <input type="checkbox" id="rb-autorotate" class="w-5 h-5 accent-emerald-500"> Rotire automată
+                            </label>
+                        </div>
+
+                        <div class="border-t border-emerald-800/50 pt-4 space-y-4">
+                            <p class="text-xs font-semibold text-mesota-accent">Fusion 360</p>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Link Fusion 360 (Fusion Team / link public de partajare)</label>
+                                <input type="text" id="rb-fusion" placeholder="https://...autodesk.com/... sau https://a360.co/..." class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Link descărcare fișier sursă (.f3d / .step), opțional</label>
+                                <input type="text" id="rb-sourcelink" placeholder="https://.../robot.f3d" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                            </div>
+                        </div>
+
+                        <div class="border-t border-emerald-800/50 pt-4 space-y-2">
+                            <p class="text-xs font-semibold text-mesota-accent"><i class="fa-brands fa-github"></i> GitHub</p>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Link repository GitHub (lasă gol pentru a ascunde butonul)</label>
+                            <input type="text" id="rb-github" placeholder="https://github.com/organizatie/repo" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-mesota-accent">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Previzualizare live (se actualizează pe măsură ce editezi)</label>
+                        <div id="rb-admin-viewer" class="robot-stage relative" style="height:460px"></div>
+                        <p id="rb-status" class="text-xs text-red-300 mt-2 min-h-[1rem]"></p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3 flex-wrap">
+                    <button onclick="robotResetDefaults()" class="px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-bold text-white">Resetează la implicit</button>
+                    <button onclick="saveRobotSettings()" class="btn-emerald px-6 py-2.5 rounded-lg font-bold text-sm">Salvează Robotul</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GALLERY EDIT/ADD MODAL -->
+    <div id="gallery-edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[55] hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-6 rounded-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeGalleryModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 id="gallery-modal-title" class="text-xl font-bold text-white mb-4">Adaugă / Editează Poză</h3>
+            <form onsubmit="saveGalleryForm(event)" class="space-y-4">
+                <input type="hidden" id="gallery-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">URL Imagine</label>
+                    <input type="text" id="gallery-image" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none" placeholder="https://..." oninput="updateGalleryPreview()">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">sau încarcă de pe calculator</label>
+                    <input type="file" id="gallery-file" accept="image/*" onchange="handleGalleryFile(event)" class="w-full text-xs text-gray-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-mesota-emerald file:text-white file:font-semibold hover:file:bg-mesota-hover">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Descriere (opțional)</label>
+                    <input type="text" id="gallery-caption" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none" placeholder="ex: Competiția regională 2026">
+                </div>
+                <div id="gallery-preview-wrap" class="hidden">
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Previzualizare</label>
+                    <img id="gallery-preview" src="" alt="" class="w-full h-48 object-cover rounded-lg border border-emerald-800">
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeGalleryModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-bold text-white">Anulează</button>
+                    <button type="submit" class="btn-emerald px-6 py-2 rounded-lg text-xs font-bold">Salvează Poza</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MEMBER EDIT/ADD MODAL -->
+    <div id="member-edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-6 rounded-2xl relative shadow-2xl">
+            <button onclick="closeMemberModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 id="member-modal-title" class="text-xl font-bold text-white mb-4">Adaugă / Editează Membru</h3>
+            <form onsubmit="saveMemberForm(event)" class="space-y-4">
+                <input type="hidden" id="member-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Nume & Prenume</label>
+                    <input type="text" id="member-name" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Rol în Echipă (ex: Lead Programmer)</label>
+                    <input type="text" id="member-role" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">URL Fotografie Profil</label>
+                    <input type="text" id="member-photo" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Scurtă Descriere</label>
+                    <textarea id="member-desc" rows="3" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeMemberModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-bold text-white">Anulează</button>
+                    <button type="submit" class="btn-emerald px-6 py-2 rounded-lg text-xs font-bold">Salvează Membru</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SPONSOR / MENTOR EDIT/ADD MODAL -->
+    <div id="entry-edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[55] hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-6 rounded-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeEntryModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 id="entry-modal-title" class="text-xl font-bold text-white mb-4">Adaugă / Editează</h3>
+            <form onsubmit="saveEntryForm(event)" class="space-y-4">
+                <input type="hidden" id="entry-kind">
+                <input type="hidden" id="entry-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Nume</label>
+                    <input type="text" id="entry-name" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none">
+                </div>
+                <div>
+                    <label id="entry-extra-label" class="block text-xs font-semibold text-gray-300 mb-1">Extra</label>
+                    <input type="text" id="entry-extra" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none">
+                </div>
+                <div>
+                    <label id="entry-image-label" class="block text-xs font-semibold text-gray-300 mb-1">URL Imagine</label>
+                    <input type="text" id="entry-image" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none" placeholder="https://..." oninput="updateEntryPreview()">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">sau încarcă de pe calculator</label>
+                    <input type="file" id="entry-file" accept="image/*" onchange="handleEntryFile(event)" class="w-full text-xs text-gray-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-mesota-emerald file:text-white file:font-semibold hover:file:bg-mesota-hover">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Descriere</label>
+                    <textarea id="entry-desc" rows="3" class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none"></textarea>
+                </div>
+                <div id="entry-preview-wrap" class="hidden">
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Previzualizare</label>
+                    <img id="entry-preview" src="" alt="" class="w-full h-40 object-contain bg-white/5 rounded-lg border border-emerald-800">
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeEntryModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-bold text-white">Anulează</button>
+                    <button type="submit" class="btn-emerald px-6 py-2 rounded-lg text-xs font-bold">Salvează</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PROJECT EDIT/ADD MODAL -->
+    <div id="project-edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-6 rounded-2xl relative shadow-2xl">
+            <button onclick="closeProjectModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 id="project-modal-title" class="text-xl font-bold text-white mb-4">Adaugă / Editează Proiect</h3>
+            <form onsubmit="saveProjectForm(event)" class="space-y-4">
+                <input type="hidden" id="project-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Titlu Proiect</label>
+                    <input type="text" id="project-title" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">URL Imagine Proiect</label>
+                    <input type="text" id="project-image" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Descriere Detaliată</label>
+                    <textarea id="project-desc" rows="4" required class="w-full bg-emerald-950 border border-emerald-800 rounded-lg px-4 py-2 text-white focus:outline-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeProjectModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-bold text-white">Anulează</button>
+                    <button type="submit" class="btn-emerald px-6 py-2 rounded-lg text-xs font-bold">Salvează Proiect</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        const MAX_GALLERY = 20;
+
+        // Initial Mock Data
+        const defaultData = {
+            settings: {
+                title: "Robotică Meșotă",
+                heroTitle: "Inovație și Performanță în Robotică",
+                heroSubtitle: "Echipa de robotică a Colegiului Național „Dr. Ioan Meșotă” Brașov proiectează, programează și construiește viitorul tehnologiei pas cu pas.",
+                heroBg: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1600&q=80",
+                phone: "+40 700 000 000",
+                email: "robotica.mesota@gmail.com",
+                instagram: "https://www.instagram.com/",
+                facebook: "https://www.facebook.com/",
+                tiktok: "https://www.tiktok.com/",
+                donateEnabled: false,
+                donateLink: "",
+                donateTitle: "Susține echipa",
+                donateText: "Fiecare contribuție ne ajută să achiziționăm componente, să construim roboți mai buni și să ajungem la competiții. Mulțumim că ești alături de noi!",
+                adminPassword: "mesota2026",
+                address: "Str. Iuliu Maniu 56, Brașov, România",
+                recoveryPhone: ""
+            },
+            gallery: [
+                { id: "g1", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80", caption: "Pregătiri pentru competiție" },
+                { id: "g2", image: "https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?auto=format&fit=crop&w=800&q=80", caption: "Robotul FTC în atelier" },
+                { id: "g3", image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80", caption: "Testare braț robotic" },
+                { id: "g4", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80", caption: "Dezvoltare software autonom" }
+            ],
+            members: [
+                {
+                    id: "m1",
+                    name: "Alexandru Popa",
+                    role: "Team Leader & CAD Designer",
+                    photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80",
+                    desc: "Pasionat de proiectare 3D în Fusion 360 și mecatronică de precizie."
+                },
+                {
+                    id: "m2",
+                    name: "Elena Ionescu",
+                    role: "Lead Software Developer",
+                    photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80",
+                    desc: "Specializată în autonome Java, sisteme de viziune computerizată OpenCV."
+                },
+                {
+                    id: "m3",
+                    name: "Matei Radu",
+                    role: "Hardware & Driver",
+                    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80",
+                    desc: "Responsabil de asamblarea mecanică și pilotarea robotului în meciuri."
+                },
+                {
+                    id: "m4",
+                    name: "Daria Stanciu",
+                    role: "PR & Notebook Manager",
+                    photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80",
+                    desc: "Gestionează documentația tehnică, portofoliul echipei și social media."
+                }
+            ],
+            projects: [
+                {
+                    id: "p1",
+                    title: "Robot FTC Season 2025-2026",
+                    image: "https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?auto=format&fit=crop&w=800&q=80",
+                    desc: "Robot competitiv echipat cu sasiu Mecanum, arm colectare din fibra de carbon si autonomie bazata pe senzori odometrici."
+                },
+                {
+                    id: "p2",
+                    title: "Braț Robotic Articulat 6-DOF",
+                    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+                    desc: "Proiect educațional imprimat 3D, controlat prin servomotoare digitale și aplicație mobilă dedicată."
+                },
+                {
+                    id: "p3",
+                    title: "Sistem de Navigație Autonomă",
+                    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+                    desc: "Modul software bazat pe camera Intel RealSense pentru mapare spațială și evitare automată a obstacolelor."
+                }
+            ]
+        };
+
+        // State Management
+        let appData;
+        try {
+            appData = JSON.parse(localStorage.getItem('mesota_robotics_data')) || defaultData;
+        } catch (err) {
+            appData = defaultData;
+        }
+        // Migrare: datele salvate înainte de adăugarea galeriei
+        if (!Array.isArray(appData.gallery)) {
+            appData.gallery = JSON.parse(JSON.stringify(defaultData.gallery));
+        }
+
+        // Migrare: linkuri social pentru date salvate anterior
+        ['instagram', 'facebook', 'tiktok'].forEach(k => {
+            if (appData.settings[k] === undefined) appData.settings[k] = defaultData.settings[k];
+        });
+
+        // Migrare: setări donații pentru date salvate anterior
+        ['donateEnabled', 'donateLink', 'donateTitle', 'donateText'].forEach(k => {
+            if (appData.settings[k] === undefined) appData.settings[k] = defaultData.settings[k];
+        });
+
+        // Migrare: adresă și telefon de recuperare pentru date salvate anterior
+        ['address', 'recoveryPhone'].forEach(k => {
+            if (appData.settings[k] === undefined) appData.settings[k] = defaultData.settings[k];
+        });
+
+        // Migrare: sponsori și mentori pentru date salvate anterior
+        const defaultSponsors = [
+            { id: "s1", name: "Sponsor Exemplu 1", extra: "", image: "https://placehold.co/400x240/ffffff/043919?text=Logo+Sponsor+1", desc: "Partener care ne susține cu echipamente și componente electronice." },
+            { id: "s2", name: "Sponsor Exemplu 2", extra: "", image: "https://placehold.co/400x240/ffffff/043919?text=Logo+Sponsor+2", desc: "Ne ajută cu finanțarea deplasărilor la competiții." }
+        ];
+        const defaultMentors = [
+            { id: "mt1", name: "Prof. Mentor Exemplu", extra: "Mentor Principal", image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=80", desc: "Coordonează echipa și ne îndrumă în proiectarea roboților." },
+            { id: "mt2", name: "Ing. Mentor Exemplu", extra: "Mentor Software", image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=80", desc: "Ne ajută cu programarea și algoritmii de autonomie." }
+        ];
+        if (!Array.isArray(appData.sponsors)) appData.sponsors = JSON.parse(JSON.stringify(defaultSponsors));
+        if (!Array.isArray(appData.mentors)) appData.mentors = JSON.parse(JSON.stringify(defaultMentors));
+
+        // Initialize UI on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPublicContent();
+        });
+
+        // Save State to LocalStorage
+        function saveState() {
+            try {
+                localStorage.setItem('mesota_robotics_data', JSON.stringify(appData));
+            } catch (err) {
+                alert('Nu s-au putut salva datele: spațiul de stocare al browserului este plin. Folosește URL-uri în loc de poze încărcate sau șterge câteva poze.');
+                return false;
+            }
+            renderPublicContent();
+            if(!document.getElementById('admin-dashboard-modal').classList.contains('hidden')) {
+                renderAdminDashboard();
+            }
+            return true;
+        }
+
+        // Escape pentru text introdus de utilizator în atribute/HTML
+        function esc(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Render Public Facing Content
+        function renderPublicContent() {
+            // Settings & Hero
+            document.getElementById('site-title-nav').innerText = appData.settings.title;
+            document.getElementById('site-title-footer').innerText = appData.settings.title;
+            document.getElementById('hero-title').innerText = appData.settings.heroTitle;
+            document.getElementById('hero-subtitle').innerText = appData.settings.heroSubtitle;
+            document.getElementById('hero-bg-div').style.backgroundImage = `url('${appData.settings.heroBg}')`;
+
+            // Phone & Email
+            const phone = appData.settings.phone || "+40 700 000 000";
+            const email = appData.settings.email || "robotica.mesota@gmail.com";
+            document.getElementById('contact-phone-display').innerText = phone;
+            document.getElementById('contact-email-display').innerText = email;
+            document.getElementById('footer-phone').innerText = phone;
+            document.getElementById('footer-email').innerText = email;
+            document.getElementById('contact-address-display').innerText = appData.settings.address || defaultData.settings.address;
+
+            // Social buttons (butonul se ascunde dacă linkul e gol)
+            const fixUrl = (u) => {
+                u = (u || '').trim();
+                if (!u) return '';
+                return /^https?:\/\//i.test(u) ? u : 'https://' + u;
+            };
+            const setSocial = (id, href) => {
+                const el = document.getElementById(id);
+                if (href) {
+                    el.href = href;
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            };
+            setSocial('social-instagram', fixUrl(appData.settings.instagram));
+            setSocial('social-facebook', fixUrl(appData.settings.facebook));
+            setSocial('social-tiktok', fixUrl(appData.settings.tiktok));
+            setSocial('social-gmail', (appData.settings.email || '').trim()
+                ? 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(appData.settings.email.trim())
+                : '');
+            const anySocial = ['social-instagram', 'social-facebook', 'social-tiktok', 'social-gmail']
+                .some(id => !document.getElementById(id).classList.contains('hidden'));
+            document.getElementById('social').classList.toggle('hidden', !anySocial);
+
+            // Donate section (vizibilă doar dacă e activată și are link)
+            const donateLink = fixUrl(appData.settings.donateLink);
+            const donateOn = !!appData.settings.donateEnabled && !!donateLink;
+            document.getElementById('doneaza').classList.toggle('hidden', !donateOn);
+            document.getElementById('nav-donate').classList.toggle('hidden', !donateOn);
+            document.getElementById('nav-donate-m').classList.toggle('hidden', !donateOn);
+            document.getElementById('donate-title').innerText = appData.settings.donateTitle || 'Susține echipa';
+            document.getElementById('donate-text').innerText = appData.settings.donateText || '';
+            document.getElementById('donate-btn').href = donateLink || '#';
+
+            // Gallery Grid (ascunde secțiunea dacă nu există poze)
+            const gallerySection = document.getElementById('galerie');
+            const galleryGrid = document.getElementById('gallery-grid');
+            if (appData.gallery.length === 0) {
+                gallerySection.classList.add('hidden');
+            } else {
+                gallerySection.classList.remove('hidden');
+                galleryGrid.innerHTML = appData.gallery.map((g, i) => `
+                    <div class="gallery-item" onclick="openLightbox(${i})">
+                        <img src="${esc(g.image)}" alt="${esc(g.caption || 'Poză galerie')}" loading="lazy" onerror="this.src='https://placehold.co/600x450/043919/ffffff?text=Poză'">
+                        ${g.caption ? `<div class="gallery-caption">${esc(g.caption)}</div>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            // Members Grid
+            const membersGrid = document.getElementById('members-grid');
+            membersGrid.innerHTML = appData.members.map(m => `
+                <div class="glass-card rounded-2xl overflow-hidden group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="${m.photo}" alt="${m.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x400/043919/ffffff?text=Membru'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-mesota-dark via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-mesota-accent uppercase tracking-wider block mb-1">${m.role}</span>
+                        <h3 class="text-xl font-bold text-white mb-2">${m.name}</h3>
+                        <p class="text-gray-300 text-xs leading-relaxed">${m.desc || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Sponsori & Mentori (ascunse dacă lista e goală)
+            const sponsorsOn = appData.sponsors.length > 0;
+            const mentorsOn = appData.mentors.length > 0;
+            document.getElementById('sponsori').classList.toggle('hidden', !sponsorsOn);
+            document.getElementById('nav-sponsors').classList.toggle('hidden', !sponsorsOn);
+            document.getElementById('nav-sponsors-m').classList.toggle('hidden', !sponsorsOn);
+            document.getElementById('mentori').classList.toggle('hidden', !mentorsOn);
+            document.getElementById('nav-mentors').classList.toggle('hidden', !mentorsOn);
+            document.getElementById('nav-mentors-m').classList.toggle('hidden', !mentorsOn);
+
+            document.getElementById('sponsors-grid').innerHTML = appData.sponsors.map(sp => {
+                const link = normalizeUrl(sp.extra);
+                const name = link
+                    ? `<a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="hover:text-mesota-accent transition">${esc(sp.name)} <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></a>`
+                    : esc(sp.name);
+                return `
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="h-40 bg-white/90 flex items-center justify-center p-4">
+                        <img src="${esc(sp.image)}" alt="${esc(sp.name)}" class="max-h-full max-w-full object-contain" loading="lazy" onerror="this.src='https://placehold.co/400x240/ffffff/043919?text=Sponsor'">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">${name}</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">${esc(sp.desc)}</p>
+                    </div>
+                </div>`;
+            }).join('');
+
+            document.getElementById('mentors-grid').innerHTML = appData.mentors.map(mt => `
+                <div class="glass-card rounded-2xl overflow-hidden group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="${esc(mt.image)}" alt="${esc(mt.name)}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" loading="lazy" onerror="this.src='https://placehold.co/400x400/043919/ffffff?text=Mentor'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-mesota-dark via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        ${mt.extra ? `<span class="text-xs font-semibold text-mesota-accent uppercase tracking-wider block mb-1">${esc(mt.extra)}</span>` : ''}
+                        <h3 class="text-xl font-bold text-white mb-2">${esc(mt.name)}</h3>
+                        <p class="text-gray-300 text-xs leading-relaxed">${esc(mt.desc)}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Projects Grid
+            const projectsGrid = document.getElementById('projects-grid');
+            projectsGrid.innerHTML = appData.projects.map(p => `
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="h-48 overflow-hidden">
+                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/043919/ffffff?text=Proiect'">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white mb-3">${p.title}</h3>
+                            <p class="text-gray-300 text-sm leading-relaxed">${p.desc}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Lightbox
+        let lightboxIndex = 0;
+
+        function openLightbox(index) {
+            lightboxIndex = index;
+            showLightboxImage();
+            document.getElementById('lightbox').classList.remove('hidden');
+        }
+
+        function showLightboxImage() {
+            const g = appData.gallery[lightboxIndex];
+            if (!g) return;
+            const img = document.getElementById('lightbox-img');
+            img.src = g.image;
+            img.alt = g.caption || 'Poză galerie';
+            document.getElementById('lightbox-caption').innerText = g.caption || '';
+        }
+
+        function stepLightbox(dir) {
+            const n = appData.gallery.length;
+            if (!n) return;
+            lightboxIndex = (lightboxIndex + dir + n) % n;
+            showLightboxImage();
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('lightbox').classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') stepLightbox(-1);
+            if (e.key === 'ArrowRight') stepLightbox(1);
+        });
+
+        // Admin Authentication & Modal Toggle
+        function toggleAdminModal() {
+            const modal = document.getElementById('admin-login-modal');
+            modal.classList.toggle('hidden');
+            document.getElementById('login-error').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass-input').value;
+            const currentPass = appData.settings.adminPassword || 'mesota2026';
+            if(pass === currentPass) {
+                toggleAdminModal();
+                document.getElementById('admin-pass-input').value = '';
+                openAdminDashboard();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function setAdminPassVisible(show) {
+            document.getElementById('edit-admin-pass').type = show ? 'text' : 'password';
+            document.getElementById('toggle-admin-pass-icon').className = show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        }
+
+        function toggleAdminPassVisibility() {
+            setAdminPassVisible(document.getElementById('edit-admin-pass').type === 'password');
+        }
+
+        function openAdminDashboard() {
+            document.getElementById('admin-dashboard-modal').classList.remove('hidden');
+            renderAdminDashboard();
+            setAdminPassVisible(false); // parola este ascunsă la fiecare deschidere a panoului
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-dashboard-modal').classList.add('hidden');
+        }
+
+        // Render Admin Dashboard
+        function renderAdminDashboard() {
+            // Fill General Inputs
+            document.getElementById('edit-site-title').value = appData.settings.title;
+            document.getElementById('edit-hero-title').value = appData.settings.heroTitle;
+            document.getElementById('edit-hero-subtitle').value = appData.settings.heroSubtitle;
+            document.getElementById('edit-hero-bg').value = appData.settings.heroBg;
+            document.getElementById('edit-contact-phone').value = appData.settings.phone || '';
+            document.getElementById('edit-contact-email').value = appData.settings.email || '';
+            document.getElementById('edit-admin-pass').value = appData.settings.adminPassword || 'mesota2026';
+            document.getElementById('edit-instagram').value = appData.settings.instagram || '';
+            document.getElementById('edit-facebook').value = appData.settings.facebook || '';
+            document.getElementById('edit-tiktok').value = appData.settings.tiktok || '';
+            document.getElementById('edit-address').value = appData.settings.address || '';
+            document.getElementById('edit-recovery-phone').value = appData.settings.recoveryPhone || '';
+
+            // Donation fields
+            document.getElementById('edit-donate-enabled').checked = !!appData.settings.donateEnabled;
+            document.getElementById('edit-donate-link').value = appData.settings.donateLink || '';
+            document.getElementById('edit-donate-title').value = appData.settings.donateTitle || '';
+            document.getElementById('edit-donate-text').value = appData.settings.donateText || '';
+            const badge = document.getElementById('donate-status-badge');
+            if (appData.settings.donateEnabled) {
+                badge.innerText = 'Activă';
+                badge.className = 'text-xs font-semibold rounded-full px-3 py-1 bg-emerald-900/60 text-mesota-accent border border-emerald-600';
+            } else {
+                badge.innerText = 'Dezactivată';
+                badge.className = 'text-xs font-semibold rounded-full px-3 py-1 bg-red-900/60 text-red-200 border border-red-700';
+            }
+
+            // Render Admin Gallery List
+            const count = appData.gallery.length;
+            document.getElementById('gallery-counter').innerText = `${count} / ${MAX_GALLERY}`;
+            document.getElementById('add-gallery-btn').disabled = count >= MAX_GALLERY;
+            const adminGallery = document.getElementById('admin-gallery-list');
+            if (count === 0) {
+                adminGallery.innerHTML = `<p class="text-sm text-gray-400 text-center py-4">Nu există poze în galerie. Adaugă prima poză.</p>`;
+            } else {
+                adminGallery.innerHTML = appData.gallery.map((g, i) => `
+                    <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-emerald-950/60 rounded-xl border border-emerald-900 gap-4">
+                        <div class="flex items-center gap-4 w-full sm:w-auto min-w-0">
+                            <span class="text-xs font-bold text-gray-400 w-5 text-center">${i + 1}</span>
+                            <img src="${esc(g.image)}" class="w-20 h-14 rounded-lg object-cover border border-emerald-500 shrink-0" onerror="this.src='https://placehold.co/100x70/043919/ffffff?text=Poză'">
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-white text-sm truncate">${esc(g.caption) || '<span class="text-gray-500 font-normal">(fără descriere)</span>'}</h4>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                            <button onclick="moveGallery('${g.id}', -1)" ${i === 0 ? 'disabled' : ''} class="px-2.5 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-xs rounded text-white disabled:opacity-30 disabled:cursor-not-allowed" title="Mută mai sus"><i class="fa-solid fa-arrow-up"></i></button>
+                            <button onclick="moveGallery('${g.id}', 1)" ${i === count - 1 ? 'disabled' : ''} class="px-2.5 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-xs rounded text-white disabled:opacity-30 disabled:cursor-not-allowed" title="Mută mai jos"><i class="fa-solid fa-arrow-down"></i></button>
+                            <button onclick="editGallery('${g.id}')" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-xs font-semibold rounded text-white">Editează</button>
+                            <button onclick="deleteGallery('${g.id}')" class="px-3 py-1.5 bg-red-900 hover:bg-red-800 text-xs font-semibold rounded text-white">Șterge</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render Admin Members List
+            const adminMembers = document.getElementById('admin-members-list');
+            adminMembers.innerHTML = appData.members.map(m => `
+                <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-emerald-950/60 rounded-xl border border-emerald-900 gap-4">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <img src="${m.photo}" class="w-12 h-12 rounded-full object-cover border border-emerald-500" onerror="this.src='https://placehold.co/100x100/043919/ffffff?text=User'">
+                        <div>
+                            <h4 class="font-bold text-white">${m.name}</h4>
+                            <span class="text-xs text-mesota-accent">${m.role}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <button onclick="editMember('${m.id}')" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-xs font-semibold rounded text-white">Editează</button>
+                        <button onclick="deleteMember('${m.id}')" class="px-3 py-1.5 bg-red-900 hover:bg-red-800 text-xs font-semibold rounded text-white">Șterge</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Admin Sponsori & Mentori
+            ['sponsors', 'mentors'].forEach(kind => {
+                const list = appData[kind];
+                const box = document.getElementById('admin-' + kind + '-list');
+                if (!list.length) {
+                    box.innerHTML = `<p class="text-sm text-gray-400 text-center py-4">Nu există intrări. Adaugă prima.</p>`;
+                    return;
+                }
+                box.innerHTML = list.map((it, i) => `
+                    <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-emerald-950/60 rounded-xl border border-emerald-900 gap-4">
+                        <div class="flex items-center gap-4 w-full sm:w-auto min-w-0">
+                            <img src="${esc(it.image)}" class="w-16 h-12 rounded-lg object-cover border border-emerald-500 shrink-0 bg-white/10" onerror="this.src='https://placehold.co/100x70/043919/ffffff?text=Img'">
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-white text-sm truncate">${esc(it.name)}</h4>
+                                <span class="text-xs text-mesota-accent truncate block">${esc(it.extra)}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                            <button onclick="moveEntry('${kind}','${it.id}', -1)" ${i === 0 ? 'disabled' : ''} class="px-2.5 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-xs rounded text-white disabled:opacity-30 disabled:cursor-not-allowed" title="Mută mai sus"><i class="fa-solid fa-arrow-up"></i></button>
+                            <button onclick="moveEntry('${kind}','${it.id}', 1)" ${i === list.length - 1 ? 'disabled' : ''} class="px-2.5 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-xs rounded text-white disabled:opacity-30 disabled:cursor-not-allowed" title="Mută mai jos"><i class="fa-solid fa-arrow-down"></i></button>
+                            <button onclick="openEntryModal('${kind}','${it.id}')" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-xs font-semibold rounded text-white">Editează</button>
+                            <button onclick="deleteEntry('${kind}','${it.id}')" class="px-3 py-1.5 bg-red-900 hover:bg-red-800 text-xs font-semibold rounded text-white">Șterge</button>
+                        </div>
+                    </div>
+                `).join('');
+            });
+
+            // Render Admin Projects List
+            const adminProjects = document.getElementById('admin-projects-list');
+            adminProjects.innerHTML = appData.projects.map(p => `
+                <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-emerald-950/60 rounded-xl border border-emerald-900 gap-4">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <img src="${p.image}" class="w-16 h-12 rounded-lg object-cover border border-emerald-500" onerror="this.src='https://placehold.co/100x100/043919/ffffff?text=Project'">
+                        <div>
+                            <h4 class="font-bold text-white">${p.title}</h4>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <button onclick="editProject('${p.id}')" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-xs font-semibold rounded text-white">Editează</button>
+                        <button onclick="deleteProject('${p.id}')" class="px-3 py-1.5 bg-red-900 hover:bg-red-800 text-xs font-semibold rounded text-white">Șterge</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Save General Settings
+        function saveGeneralSettings() {
+            const emailToSave = document.getElementById('edit-contact-email').value.trim();
+            if (emailToSave && !isValidEmail(emailToSave)) {
+                alert('Adresa de email nu este validă. Verific-o (ex: echipa@gmail.com) și încearcă din nou.');
+                return;
+            }
+            appData.settings.title =document.getElementById('edit-site-title').value;
+            appData.settings.heroTitle = document.getElementById('edit-hero-title').value;
+            appData.settings.heroSubtitle = document.getElementById('edit-hero-subtitle').value;
+            appData.settings.heroBg = document.getElementById('edit-hero-bg').value;
+            appData.settings.phone = document.getElementById('edit-contact-phone').value;
+            appData.settings.email = emailToSave;
+            appData.settings.instagram = document.getElementById('edit-instagram').value.trim();
+            appData.settings.facebook = document.getElementById('edit-facebook').value.trim();
+            appData.settings.tiktok = document.getElementById('edit-tiktok').value.trim();
+            
+            appData.settings.address = document.getElementById('edit-address').value.trim() || defaultData.settings.address;
+            appData.settings.recoveryPhone = document.getElementById('edit-recovery-phone').value.trim();
+
+            const newPass = document.getElementById('edit-admin-pass').value.trim();
+            if(newPass) {
+                appData.settings.adminPassword = newPass;
+            }
+
+            if (saveState()) {
+                alert('Setările generale, datele de contact și parola au fost salvate cu succes!');
+            }
+        }
+
+        // Donation Management Operations
+        function normalizeUrl(u) {
+            u = (u || '').trim();
+            if (!u) return '';
+            return /^https?:\/\//i.test(u) ? u : 'https://' + u;
+        }
+
+        // Pornit/oprit imediat din comutator
+        function toggleDonation(on) {
+            const link = normalizeUrl(document.getElementById('edit-donate-link').value || appData.settings.donateLink);
+            if (on && !link) {
+                alert('Introdu mai întâi linkul de plată și salvează, apoi activează secțiunea.');
+                document.getElementById('edit-donate-enabled').checked = false;
+                return;
+            }
+            const previous = appData.settings.donateEnabled;
+            appData.settings.donateEnabled = on;
+            if (on) appData.settings.donateLink = link;
+            if (!saveState()) {
+                appData.settings.donateEnabled = previous;
+                renderAdminDashboard();
+            }
+        }
+
+        function saveDonationSettings() {
+            const link = normalizeUrl(document.getElementById('edit-donate-link').value);
+            appData.settings.donateLink = link;
+            appData.settings.donateTitle = document.getElementById('edit-donate-title').value.trim();
+            appData.settings.donateText = document.getElementById('edit-donate-text').value.trim();
+            if (!link) appData.settings.donateEnabled = false;
+            if (saveState()) {
+                alert(link
+                    ? 'Setările de donații au fost salvate.'
+                    : 'Setările au fost salvate. Fără link de plată, secțiunea rămâne dezactivată.');
+            }
+        }
+
+        // Gallery Management Operations
+        function openGalleryModal(galleryId = null) {
+            if (!galleryId && appData.gallery.length >= MAX_GALLERY) {
+                alert(`Ai atins limita de ${MAX_GALLERY} poze. Șterge o poză pentru a adăuga alta.`);
+                return;
+            }
+            document.getElementById('gallery-edit-modal').classList.remove('hidden');
+            document.getElementById('gallery-file').value = '';
+            if (galleryId) {
+                const g = appData.gallery.find(item => item.id === galleryId);
+                document.getElementById('gallery-modal-title').innerText = "Editează Poză";
+                document.getElementById('gallery-id').value = g.id;
+                document.getElementById('gallery-image').value = g.image;
+                document.getElementById('gallery-caption').value = g.caption || '';
+            } else {
+                document.getElementById('gallery-modal-title').innerText = "Adaugă Poză Nouă";
+                document.getElementById('gallery-id').value = '';
+                document.getElementById('gallery-image').value = '';
+                document.getElementById('gallery-caption').value = '';
+            }
+            updateGalleryPreview();
+        }
+
+        function closeGalleryModal() {
+            document.getElementById('gallery-edit-modal').classList.add('hidden');
+        }
+
+        function updateGalleryPreview() {
+            const url = document.getElementById('gallery-image').value.trim();
+            const wrap = document.getElementById('gallery-preview-wrap');
+            if (url) {
+                document.getElementById('gallery-preview').src = url;
+                wrap.classList.remove('hidden');
+            } else {
+                wrap.classList.add('hidden');
+            }
+        }
+
+        // Încărcare fișier + redimensionare (max 1000px, JPEG) pentru a economisi spațiu
+        function handleGalleryFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxSide = 1000;
+                    const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    document.getElementById('gallery-image').value = canvas.toDataURL('image/jpeg', 0.75);
+                    updateGalleryPreview();
+                };
+                img.onerror = () => alert('Fișierul selectat nu este o imagine validă.');
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveGalleryForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('gallery-id').value;
+            const image = document.getElementById('gallery-image').value.trim();
+            if (!image) {
+                alert('Introdu un URL sau încarcă o imagine.');
+                return;
+            }
+            const item = {
+                id: id ? id : 'g_' + Date.now(),
+                image: image,
+                caption: document.getElementById('gallery-caption').value.trim()
+            };
+
+            const backup = JSON.parse(JSON.stringify(appData.gallery));
+            if (id) {
+                const idx = appData.gallery.findIndex(g => g.id === id);
+                appData.gallery[idx] = item;
+            } else {
+                if (appData.gallery.length >= MAX_GALLERY) {
+                    alert(`Ai atins limita de ${MAX_GALLERY} poze.`);
+                    return;
+                }
+                appData.gallery.push(item);
+            }
+
+            if (saveState()) {
+                closeGalleryModal();
+            } else {
+                appData.gallery = backup;
+            }
+        }
+
+        function editGallery(id) {
+            openGalleryModal(id);
+        }
+
+        function deleteGallery(id) {
+            if (confirm('Sigur doriți să ștergeți această poză?')) {
+                appData.gallery = appData.gallery.filter(g => g.id !== id);
+                saveState();
+            }
+        }
+
+        function moveGallery(id, dir) {
+            const idx = appData.gallery.findIndex(g => g.id === id);
+            const newIdx = idx + dir;
+            if (idx < 0 || newIdx < 0 || newIdx >= appData.gallery.length) return;
+            const tmp = appData.gallery[idx];
+            appData.gallery[idx] = appData.gallery[newIdx];
+            appData.gallery[newIdx] = tmp;
+            saveState();
+        }
+
+        // Member Management Operations
+        function openMemberModal(memberId = null) {
+            document.getElementById('member-edit-modal').classList.remove('hidden');
+            if(memberId) {
+                const m = appData.members.find(item => item.id === memberId);
+                document.getElementById('member-modal-title').innerText = "Editează Membru";
+                document.getElementById('member-id').value = m.id;
+                document.getElementById('member-name').value = m.name;
+                document.getElementById('member-role').value = m.role;
+                document.getElementById('member-photo').value = m.photo;
+                document.getElementById('member-desc').value = m.desc || '';
+            } else {
+                document.getElementById('member-modal-title').innerText = "Adaugă Membru Nou";
+                document.getElementById('member-id').value = '';
+                document.getElementById('member-name').value = '';
+                document.getElementById('member-role').value = '';
+                document.getElementById('member-photo').value = '';
+                document.getElementById('member-desc').value = '';
+            }
+        }
+
+        function closeMemberModal() {
+            document.getElementById('member-edit-modal').classList.add('hidden');
+        }
+
+        function saveMemberForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('member-id').value;
+            const newMember = {
+                id: id ? id : 'm_' + Date.now(),
+                name: document.getElementById('member-name').value,
+                role: document.getElementById('member-role').value,
+                photo: document.getElementById('member-photo').value,
+                desc: document.getElementById('member-desc').value
+            };
+
+            if(id) {
+                const idx = appData.members.findIndex(m => m.id === id);
+                appData.members[idx] = newMember;
+            } else {
+                appData.members.push(newMember);
+            }
+
+            saveState();
+            closeMemberModal();
+        }
+
+        function editMember(id) {
+            openMemberModal(id);
+        }
+
+        function deleteMember(id) {
+            if(confirm('Sigur doriți să ștergeți acest membru?')) {
+                appData.members = appData.members.filter(m => m.id !== id);
+                saveState();
+            }
+        }
+
+        // Project Management Operations
+        function openProjectModal(projectId = null) {
+            document.getElementById('project-edit-modal').classList.remove('hidden');
+            if(projectId) {
+                const p = appData.projects.find(item => item.id === projectId);
+                document.getElementById('project-modal-title').innerText = "Editează Proiect";
+                document.getElementById('project-id').value = p.id;
+                document.getElementById('project-title').value = p.title;
+                document.getElementById('project-image').value = p.image;
+                document.getElementById('project-desc').value = p.desc;
+            } else {
+                document.getElementById('project-modal-title').innerText = "Adaugă Proiect Nou";
+                document.getElementById('project-id').value = '';
+                document.getElementById('project-title').value = '';
+                document.getElementById('project-image').value = '';
+                document.getElementById('project-desc').value = '';
+            }
+        }
+
+        function closeProjectModal() {
+            document.getElementById('project-edit-modal').classList.add('hidden');
+        }
+
+        function saveProjectForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('project-id').value;
+            const newProject = {
+                id: id ? id : 'p_' + Date.now(),
+                title: document.getElementById('project-title').value,
+                image: document.getElementById('project-image').value,
+                desc: document.getElementById('project-desc').value
+            };
+
+            if(id) {
+                const idx = appData.projects.findIndex(p => p.id === id);
+                appData.projects[idx] = newProject;
+            } else {
+                appData.projects.push(newProject);
+            }
+
+            saveState();
+            closeProjectModal();
+        }
+
+        function editProject(id) {
+            openProjectModal(id);
+        }
+
+        function deleteProject(id) {
+            if(confirm('Sigur doriți să ștergeți acest proiect?')) {
+                appData.projects = appData.projects.filter(p => p.id !== id);
+                saveState();
+            }
+        }
+
+        // Sponsori & Mentori: operații comune
+        const ENTRY_CFG = {
+            sponsors: { add: 'Adaugă Sponsor', edit: 'Editează Sponsor', extra: 'Link site sponsor (opțional)', extraPh: 'https://www.sponsor.ro', image: 'URL Logo / Imagine', confirm: 'Sigur doriți să ștergeți acest sponsor?' },
+            mentors:  { add: 'Adaugă Mentor',  edit: 'Editează Mentor',  extra: 'Rol / funcție (ex: Mentor Software)', extraPh: 'ex: Mentor Principal', image: 'URL Fotografie', confirm: 'Sigur doriți să ștergeți acest mentor?' }
+        };
+
+        function openEntryModal(kind, id = null) {
+            const cfg = ENTRY_CFG[kind];
+            const it = id ? appData[kind].find(x => x.id === id) : null;
+            document.getElementById('entry-kind').value = kind;
+            document.getElementById('entry-id').value = it ? it.id : '';
+            document.getElementById('entry-modal-title').innerText = it ? cfg.edit : cfg.add;
+            document.getElementById('entry-extra-label').innerText = cfg.extra;
+            document.getElementById('entry-extra').placeholder = cfg.extraPh;
+            document.getElementById('entry-image-label').innerText = cfg.image;
+            document.getElementById('entry-name').value = it ? it.name : '';
+            document.getElementById('entry-extra').value = it ? (it.extra || '') : '';
+            document.getElementById('entry-image').value = it ? it.image : '';
+            document.getElementById('entry-desc').value = it ? (it.desc || '') : '';
+            document.getElementById('entry-file').value = '';
+            updateEntryPreview();
+            document.getElementById('entry-edit-modal').classList.remove('hidden');
+        }
+
+        function closeEntryModal() {
+            document.getElementById('entry-edit-modal').classList.add('hidden');
+        }
+
+        function updateEntryPreview() {
+            const url = document.getElementById('entry-image').value.trim();
+            const wrap = document.getElementById('entry-preview-wrap');
+            if (url) {
+                document.getElementById('entry-preview').src = url;
+                wrap.classList.remove('hidden');
+            } else {
+                wrap.classList.add('hidden');
+            }
+        }
+
+        // Încărcare fișier + redimensionare (max 800px) pentru a economisi spațiu
+        function handleEntryFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxSide = 800;
+                    const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    document.getElementById('entry-image').value = canvas.toDataURL('image/jpeg', 0.8);
+                    updateEntryPreview();
+                };
+                img.onerror = () => alert('Fișierul selectat nu este o imagine validă.');
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveEntryForm(e) {
+            e.preventDefault();
+            const kind = document.getElementById('entry-kind').value;
+            const id = document.getElementById('entry-id').value;
+            const image = document.getElementById('entry-image').value.trim();
+            if (!image) {
+                alert('Introdu un URL sau încarcă o imagine.');
+                return;
+            }
+            const item = {
+                id: id || (kind === 'sponsors' ? 's_' : 'mt_') + Date.now(),
+                name: document.getElementById('entry-name').value.trim(),
+                extra: document.getElementById('entry-extra').value.trim(),
+                image: image,
+                desc: document.getElementById('entry-desc').value.trim()
+            };
+            const backup = JSON.parse(JSON.stringify(appData[kind]));
+            if (id) {
+                const idx = appData[kind].findIndex(x => x.id === id);
+                appData[kind][idx] = item;
+            } else {
+                appData[kind].push(item);
+            }
+            if (saveState()) {
+                closeEntryModal();
+            } else {
+                appData[kind] = backup;
+            }
+        }
+
+        function deleteEntry(kind, id) {
+            if (confirm(ENTRY_CFG[kind].confirm)) {
+                appData[kind] = appData[kind].filter(x => x.id !== id);
+                saveState();
+            }
+        }
+
+        function moveEntry(kind, id, dir) {
+            const list = appData[kind];
+            const idx = list.findIndex(x => x.id === id);
+            const n = idx + dir;
+            if (idx < 0 || n < 0 || n >= list.length) return;
+            [list[idx], list[n]] = [list[n], list[idx]];
+            saveState();
+        }
+
+        // Export Data JSON Backup
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "mesota_robotics_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // ===== Formular de contact =====
+        // Mesajul este trimis direct (fără program de email, fără popup-uri) prin FormSubmit.
+        // Adresa de destinație se citește din setările de admin la FIECARE trimitere.
+        const CONTACT_ENDPOINT = 'https://formsubmit.co/ajax/';
+        const DEFAULT_CONTACT_EMAIL = 'robotica.mesota@gmail.com';
+        let contactDraft = null; // ultimul mesaj, folosit de variantele de rezervă
+
+        function isValidEmail(v) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+        }
+
+        function getTargetEmail() {
+            const saved = (appData.settings.email || '').trim();
+            return isValidEmail(saved) ? saved : DEFAULT_CONTACT_EMAIL;
+        }
+
+        function buildContactLinks(d) {
+            const subject = `Mesaj nou de la ${d.name} - Site Robotică`;
+            const body = `Nume: ${d.name}\nEmail: ${d.email}\n\nMesaj:\n${d.message}`;
+            return {
+                gmail: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(d.to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+                mailto: `mailto:${d.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+                text: body
+            };
+        }
+
+        function showContactStatus(type, text) {
+            const el = document.getElementById('contact-status');
+            const styles = {
+                ok: 'bg-emerald-900/60 border-emerald-500 text-emerald-100',
+                error: 'bg-red-900/50 border-red-600 text-red-100',
+                info: 'bg-white/10 border-white/20 text-gray-100'
+            };
+            el.className = 'rounded-lg border px-4 py-3 text-sm ' + (styles[type] || styles.info);
+            el.textContent = text;
+        }
+
+        function setContactSending(on) {
+            document.getElementById('contact-submit-btn').disabled = on;
+            document.getElementById('contact-submit-label').textContent = on ? 'Se trimite...' : 'Trimite mesajul';
+            document.getElementById('contact-submit-icon').className = on ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-paper-plane';
+        }
+
+        function showContactFallback(d) {
+            const links = buildContactLinks(d);
+            document.getElementById('contact-fallback-gmail').href = links.gmail;
+            document.getElementById('contact-fallback-mailto').href = links.mailto;
+            document.getElementById('contact-fallback').classList.remove('hidden');
+        }
+
+        // Trimitere prin FormSubmit (folosită și de formular, și de butonul de test din admin)
+        async function postToFormSubmit(to, payload) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 15000);
+            try {
+                const res = await fetch(CONTACT_ENDPOINT + encodeURIComponent(to), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(Object.assign({ _captcha: 'false', _template: 'table' }, payload)),
+                    signal: controller.signal
+                });
+                let json = {};
+                try { json = await res.json(); } catch (err) { /* răspuns fără JSON */ }
+                return {
+                    success: res.ok && (json.success === true || json.success === 'true'),
+                    needsActivation: /activat/i.test(String(json.message || '')),
+                    message: json.message || ('HTTP ' + res.status)
+                };
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        async function handleContactSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+
+            // Câmpul-capcană completat = robot; nu trimitem nimic
+            if (document.getElementById('contact-website').value) return;
+
+            const data = {
+                name: document.getElementById('contact-name-input').value.trim(),
+                email: document.getElementById('contact-sender-email').value.trim(),
+                message: document.getElementById('contact-message-input').value.trim(),
+                to: getTargetEmail()
+            };
+
+            if (!data.name || !data.message || !isValidEmail(data.email)) {
+                showContactStatus('error', 'Completează numele, un email valid și mesajul.');
+                return;
+            }
+
+            contactDraft = data;
+            document.getElementById('contact-fallback').classList.add('hidden');
+            setContactSending(true);
+            showContactStatus('info', 'Se trimite mesajul...');
+
+            try {
+                const result = await postToFormSubmit(data.to, {
+                    name: data.name,
+                    email: data.email,
+                    message: data.message,
+                    _subject: `Mesaj nou de la ${data.name} - Site Robotică`
+                });
+                if (!result.success || result.needsActivation) {
+                    throw new Error(result.needsActivation ? 'Adresa de destinație nu este încă activată.' : result.message);
+                }
+                form.reset();
+                contactDraft = null;
+                showContactStatus('ok', 'Mesajul a fost trimis. Îți mulțumim! Te vom contacta în curând.');
+            } catch (err) {
+                console.warn('Trimiterea automată a eșuat:', err);
+                showContactStatus('error', 'Nu am putut trimite mesajul automat. Mesajul tău nu s-a pierdut: folosește una dintre variantele de mai jos.');
+                showContactFallback(data);
+            } finally {
+                setContactSending(false);
+            }
+        }
+
+        async function copyContactMessage() {
+            if (!contactDraft) return;
+            const text = `Către: ${contactDraft.to}\n\n` + buildContactLinks(contactDraft).text;
+            let copied = false;
+            try {
+                await navigator.clipboard.writeText(text);
+                copied = true;
+            } catch (err) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                try { copied = document.execCommand('copy'); } catch (err2) { copied = false; }
+                ta.remove();
+            }
+            showContactStatus(copied ? 'ok' : 'error', copied
+                ? `Mesajul a fost copiat. Lipește-l într-un email către ${contactDraft.to}.`
+                : 'Nu am putut copia automat. Selectează textul din formular și copiază-l manual.');
+        }
+
+        // Buton de test din admin: trimite un mesaj la adresa din câmp și (la prima folosire) declanșează activarea
+        async function sendTestContactMessage() {
+            const to = document.getElementById('edit-contact-email').value.trim();
+            if (!isValidEmail(to)) {
+                alert('Introdu mai întâi o adresă de email validă în câmpul de mai sus.');
+                return;
+            }
+            try {
+                const result = await postToFormSubmit(to, {
+                    name: 'Test din panoul de admin',
+                    email: to,
+                    message: 'Acesta este un mesaj de test trimis din panoul de administrare al site-ului.',
+                    _subject: 'Test formular site robotică'
+                });
+                if (result.needsActivation) {
+                    alert(`Am trimis cererea de activare la ${to}.\n\nDeschide emailul primit de la FormSubmit (verifică și Spam) și apasă linkul de activare. Abia după aceea formularul de pe site trimite automat mesajele către această adresă.`);
+                } else if (result.success) {
+                    alert(`Mesajul de test a fost trimis la ${to}. Verifică inboxul (și Spam).`);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (err) {
+                alert('Nu am putut contacta serviciul de trimitere: ' + err.message + '\n\nDacă site-ul este deschis direct din fișier sau într-o previzualizare, pune-l pe un hosting. Până atunci, formularul îți oferă variantele de rezervă (Gmail / aplicația de email / copiere).');
+            }
+        }
+    </script>
+
+    <!-- ===== ROBOT 3D: librării three.js ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+
+    <script>
+    /* ================= SECȚIUNEA ROBOT 3D ================= */
+    const ROBOT_DEFAULT = {
+        enabled: true,
+        name: 'Robot FTC Season 2025-2026',
+        desc: 'Robot competitiv cu șasiu Mecanum, braț articulat și sistem de colectare (intake).',
+        specs: 'Șasiu: Mecanum 4x4\nBraț: 2 articulații + gripper\nProgramare: Java (FTC SDK)\nSenzori: Odometrie + IMU',
+        modelSource: 'default', modelUrl: '', modelFileName: '',
+        modelColor: '#9ca3af', zUp: false,
+        bg: '#06281a', autoRotate: true,
+        fusionLink: '', sourceLink: '', githubLink: '',
+        parts: { chassis: '#00873e', wheels: '#1f2937', arm: '#4ade80', accent: '#f59e0b', width: 4.6, length: 5, armOn: true, intakeOn: true }
+    };
+
+    // Migrare / valori lipsă
+    appData.robot = Object.assign({}, JSON.parse(JSON.stringify(ROBOT_DEFAULT)), appData.robot || {});
+    appData.robot.parts = Object.assign({}, ROBOT_DEFAULT.parts, appData.robot.parts || {});
+
+    /* ---------- IndexedDB pentru fișierul model încărcat ---------- */
+    function robotDB() {
+        return new Promise((res, rej) => {
+            const r = indexedDB.open('mesota_robot_db', 1);
+            r.onupgradeneeded = () => r.result.createObjectStore('files');
+            r.onsuccess = () => res(r.result);
+            r.onerror = () => rej(r.error);
+        });
+    }
+    async function robotIdbSet(k, v) {
+        const db = await robotDB();
+        return new Promise((res, rej) => {
+            const tx = db.transaction('files', 'readwrite');
+            tx.objectStore('files').put(v, k);
+            tx.oncomplete = () => res();
+            tx.onerror = () => rej(tx.error);
+        });
+    }
+    async function robotIdbGet(k) {
+        const db = await robotDB();
+        return new Promise((res, rej) => {
+            const rq = db.transaction('files').objectStore('files').get(k);
+            rq.onsuccess = () => res(rq.result || null);
+            rq.onerror = () => rej(rq.error);
+        });
+    }
+
+    /* ---------- Robotul implicit (procedural, din forme simple) ---------- */
+    function robotMecanumWheel(r, w, tire, accent, dir) {
+        const g = new THREE.Group();
+        const mat = (c) => new THREE.MeshStandardMaterial({ color: c, metalness: 0.3, roughness: 0.6 });
+        const hub = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.62, r * 0.62, w, 24), mat(tire));
+        hub.rotation.z = Math.PI / 2;
+        g.add(hub);
+        const n = 9;
+        for (let i = 0; i < n; i++) {
+            const pivot = new THREE.Group();
+            pivot.rotation.x = (i / n) * Math.PI * 2;
+            const inner = new THREE.Group();
+            inner.position.set(0, 0, r * 0.78);
+            inner.rotation.z = dir * Math.PI / 4;
+            const roller = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.22, r * 0.22, w * 0.95, 12), mat(accent));
+            roller.rotation.z = Math.PI / 2;
+            inner.add(roller);
+            pivot.add(inner);
+            g.add(pivot);
+        }
+        return g;
+    }
+
+    function buildDefaultRobot(p) {
+        const g = new THREE.Group();
+        const M = (c, m = 0.35, r = 0.55) => new THREE.MeshStandardMaterial({ color: c, metalness: m, roughness: r });
+        const W = +p.width || 4.6, L = +p.length || 5, R = 0.55, WW = 0.5, base = R;
+        const box = (w, h, d, c, x, y, z, parent = g) => {
+            const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), M(c));
+            m.position.set(x, y, z);
+            parent.add(m);
+            return m;
+        };
+
+        box(W, 0.18, L, p.chassis, 0, base + 0.1, 0);
+        box(0.18, 0.5, L, p.accent, -W / 2 + 0.1, base + 0.35, 0);
+        box(0.18, 0.5, L, p.accent, W / 2 - 0.1, base + 0.35, 0);
+        box(1.4, 0.35, 1.0, '#111827', 0, base + 0.38, -L * 0.28);
+        box(1.0, 0.5, 0.6, '#374151', 0, base + 0.45, L * 0.1);
+
+        [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => {
+            const w = robotMecanumWheel(R, WW, p.wheels, p.accent, sx * sz);
+            w.position.set(sx * (W / 2 + WW / 2 + 0.05), R, sz * (L / 2 - 0.8));
+            g.add(w);
+        });
+
+        if (p.armOn) {
+            const arm = new THREE.Group();
+            arm.position.set(0, base + 0.2, -0.3);
+            g.add(arm);
+            const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.8, 0.4, 24), M(p.arm));
+            turret.position.y = 0.2;
+            arm.add(turret);
+
+            const shoulder = new THREE.Group();
+            shoulder.position.set(0, 0.6, 0);
+            shoulder.rotation.x = -0.9;
+            arm.add(shoulder);
+            box(0.4, 0.4, 3, p.arm, 0, 0, 1.5, shoulder);
+            const j1 = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 16), M(p.accent));
+            shoulder.add(j1);
+
+            const elbow = new THREE.Group();
+            elbow.position.set(0, 0, 3);
+            elbow.rotation.x = 1.5;
+            shoulder.add(elbow);
+            box(0.32, 0.32, 2.4, p.arm, 0, 0, 1.2, elbow);
+            const j2 = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), M(p.accent));
+            elbow.add(j2);
+
+            box(0.7, 0.2, 0.4, p.accent, 0, 0, 2.4, elbow);
+            box(0.12, 0.12, 0.8, p.accent, -0.3, 0, 2.8, elbow);
+            box(0.12, 0.12, 0.8, p.accent, 0.3, 0, 2.8, elbow);
+        }
+
+        if (p.intakeOn) {
+            const it = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, W - 0.5, 20), M(p.accent, 0.1, 0.8));
+            it.rotation.z = Math.PI / 2;
+            it.position.set(0, base + 0.15, L / 2 + 0.35);
+            g.add(it);
+            box(0.12, 0.6, 0.9, p.chassis, -(W / 2 - 0.3), base + 0.25, L / 2 + 0.1);
+            box(0.12, 0.6, 0.9, p.chassis, (W / 2 - 0.3), base + 0.25, L / 2 + 0.1);
+        }
+        return g;
+    }
+
+    /* ---------- Viewer 3D ---------- */
+    class RobotViewer {
+        constructor(el) {
+            this.el = el; this.sig = ''; this.token = 0; this.wire = false; this.visible = true; this.lastError = '';
+            this.homePos = new THREE.Vector3(9, 6, 10); this.homeTarget = new THREE.Vector3(0, 1.5, 0);
+            if (typeof THREE === 'undefined' || !THREE.OrbitControls) {
+                this.renderer = null;
+                el.innerHTML = '<p class="absolute inset-0 flex items-center justify-center text-sm text-gray-300 p-6 text-center">Librăria 3D nu s-a putut încărca (verifică conexiunea la internet).</p>';
+                return;
+            }
+            try {
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+            } catch (e) {
+                this.renderer = null;
+                el.innerHTML = '<p class="absolute inset-0 flex items-center justify-center text-sm text-gray-300 p-6 text-center">Browserul nu suportă WebGL.</p>';
+                return;
+            }
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            el.appendChild(this.renderer.domElement);
+            this.renderer.domElement.style.display = 'block';
+
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(40, 1, 0.1, 500);
+            this.scene.add(new THREE.HemisphereLight(0xffffff, 0x1b3a2a, 0.9));
+            const d1 = new THREE.DirectionalLight(0xffffff, 0.9); d1.position.set(6, 10, 8); this.scene.add(d1);
+            const d2 = new THREE.DirectionalLight(0xffffff, 0.35); d2.position.set(-8, 4, -6); this.scene.add(d2);
+            this.scene.add(new THREE.GridHelper(24, 24, 0x00ab4f, 0x0a4d28));
+
+            this.root = new THREE.Group();
+            this.scene.add(this.root);
+
+            this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+            this.controls.enableDamping = true;
+            this.controls.autoRotateSpeed = 1.6;
+            this.controls.maxPolarAngle = Math.PI * 0.495;
+
+            new ResizeObserver(() => this.resize()).observe(el);
+            new IntersectionObserver((e) => { this.visible = e[0].isIntersecting; }).observe(el);
+            this.resize();
+            this.resetView();
+            this.loop();
+        }
+
+        resize() {
+            if (!this.renderer) return;
+            const w = this.el.clientWidth, h = this.el.clientHeight;
+            if (!w || !h) return;
+            this.renderer.setSize(w, h);
+            this.camera.aspect = w / h;
+            this.camera.updateProjectionMatrix();
+        }
+
+        loop() {
+            requestAnimationFrame(() => this.loop());
+            if (!this.visible || !this.el.clientWidth) return;
+            this.controls.update();
+            this.renderer.render(this.scene, this.camera);
+        }
+
+        resetView() {
+            if (!this.renderer) return;
+            this.camera.position.copy(this.homePos);
+            this.controls.target.copy(this.homeTarget);
+            this.controls.update();
+        }
+
+        setWireframe(on) {
+            this.wire = on;
+            this.root.traverse(o => {
+                if (o.isMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.wireframe = on);
+            });
+        }
+
+        clear() {
+            while (this.root.children.length) {
+                const c = this.root.children[0];
+                this.root.remove(c);
+                c.traverse(o => {
+                    if (o.geometry) o.geometry.dispose();
+                    if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose());
+                });
+            }
+        }
+
+        fit(obj) {
+            const box = new THREE.Box3().setFromObject(obj);
+            const size = box.getSize(new THREE.Vector3());
+            const m = Math.max(size.x, size.y, size.z) || 1;
+            obj.scale.multiplyScalar(6 / m);
+            box.setFromObject(obj);
+            const c = box.getCenter(new THREE.Vector3());
+            obj.position.x -= c.x; obj.position.z -= c.z; obj.position.y -= box.min.y;
+        }
+
+        loadModel(src, cfg) {
+            const ext = (src.name || '').split('?')[0].split('#')[0].split('.').pop().toLowerCase();
+            const mat = () => new THREE.MeshStandardMaterial({ color: cfg.modelColor, metalness: 0.3, roughness: 0.55, side: THREE.DoubleSide });
+            const wrap = (o) => {
+                if (cfg.zUp && ext !== 'glb' && ext !== 'gltf') o.rotation.x = -Math.PI / 2;
+                const g = new THREE.Group(); g.add(o); this.fit(g); return g;
+            };
+            return new Promise((resolve, reject) => {
+                try {
+                    if (ext === 'glb' || ext === 'gltf') {
+                        const l = new THREE.GLTFLoader();
+                        const ok = (gl) => resolve(wrap(gl.scene));
+                        if (src.buffer) l.parse(src.buffer, '', ok, reject); else l.load(src.url, ok, undefined, reject);
+                    } else if (ext === 'stl') {
+                        const l = new THREE.STLLoader();
+                        const mk = (geo) => resolve(wrap(new THREE.Mesh(geo, mat())));
+                        if (src.buffer) mk(l.parse(src.buffer)); else l.load(src.url, mk, undefined, reject);
+                    } else if (ext === 'obj') {
+                        const l = new THREE.OBJLoader();
+                        const fin = (o) => {
+                            o.traverse(c => { if (c.isMesh) { c.material = mat(); if (!c.geometry.attributes.normal) c.geometry.computeVertexNormals(); } });
+                            resolve(wrap(o));
+                        };
+                        if (src.buffer) fin(l.parse(new TextDecoder().decode(src.buffer))); else l.load(src.url, fin, undefined, reject);
+                    } else {
+                        reject(new Error('Format nesuportat (.' + ext + '). Folosește GLB, GLTF, STL sau OBJ.'));
+                    }
+                } catch (e) { reject(e); }
+            });
+        }
+
+        async load(cfg, override) {
+            if (!this.renderer) return;
+            const token = ++this.token;
+            this.lastError = '';
+            this.scene.background = new THREE.Color(cfg.bg || '#06281a');
+            this.controls.autoRotate = !!cfg.autoRotate;
+            let obj = null;
+            try {
+                if (cfg.modelSource === 'url' && cfg.modelUrl) {
+                    obj = await this.loadModel({ url: normalizeUrl(cfg.modelUrl), name: cfg.modelUrl }, cfg);
+                } else if (cfg.modelSource === 'file') {
+                    const f = override || await robotIdbGet('model');
+                    if (f) obj = await this.loadModel({ buffer: f.buffer, name: f.name }, cfg);
+                    else this.lastError = 'Nu există niciun fișier încărcat.';
+                }
+            } catch (e) {
+                console.warn('Model 3D:', e);
+                this.lastError = 'Modelul nu a putut fi încărcat: ' + (e && e.message ? e.message : 'eroare necunoscută') + ' Se afișează robotul implicit.';
+            }
+            if (token !== this.token) return;
+            if (!obj) obj = buildDefaultRobot(cfg.parts);
+
+            this.clear();
+            this.root.add(obj);
+            this.setWireframe(this.wire);
+            const box = new THREE.Box3().setFromObject(obj);
+            const s = box.getSize(new THREE.Vector3());
+            const d = Math.max(s.x, s.y, s.z) || 6;
+            this.homeTarget.set(0, s.y / 2, 0);
+            this.homePos.set(d * 1.25, s.y / 2 + d * 0.7, d * 1.5);
+            this.controls.minDistance = d * 0.4;
+            this.controls.maxDistance = d * 6;
+            this.resetView();
+        }
+    }
+
+    /* ---------- Partea publică ---------- */
+    let robotPublicViewer = null;
+    let robotDownloadUrl = null;
+
+    async function renderRobotPublic() {
+        const r = appData.robot;
+        const sec = document.getElementById('robot');
+        sec.classList.toggle('hidden', !r.enabled);
+        document.getElementById('nav-robot').classList.toggle('hidden', !r.enabled);
+        document.getElementById('nav-robot-m').classList.toggle('hidden', !r.enabled);
+        if (!r.enabled) return;
+
+        document.getElementById('robot-name').innerText = r.name || '';
+        document.getElementById('robot-desc').innerText = r.desc || '';
+        document.getElementById('robot-specs').innerHTML = (r.specs || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+            const i = l.indexOf(':');
+            return i > 0
+                ? `<div class="flex justify-between gap-4 py-2 border-b border-white/10 text-sm"><dt class="text-gray-400">${esc(l.slice(0, i))}</dt><dd class="text-white font-semibold text-right">${esc(l.slice(i + 1).trim())}</dd></div>`
+                : `<div class="py-2 border-b border-white/10 text-sm text-gray-200">${esc(l)}</div>`;
+        }).join('');
+
+        const fb = document.getElementById('robot-fusion-btn');
+        const fl = normalizeUrl(r.fusionLink);
+        fb.classList.toggle('hidden', !fl);
+        fb.classList.toggle('inline-flex', !!fl);
+        if (fl) fb.href = fl;
+
+        const gb = document.getElementById('robot-github-btn');
+        const gl = normalizeUrl(r.githubLink);
+        gb.classList.toggle('hidden', !gl);
+        gb.classList.toggle('inline-flex', !!gl);
+        if (gl) gb.href = gl;
+
+        const db = document.getElementById('robot-download-btn');
+        let dl = '', dlName = '';
+        if (r.sourceLink) { dl = normalizeUrl(r.sourceLink); }
+        else if (r.modelSource === 'url' && r.modelUrl) { dl = normalizeUrl(r.modelUrl); }
+        else if (r.modelSource === 'file') {
+            try {
+                const f = await robotIdbGet('model');
+                if (f) {
+                    if (robotDownloadUrl) URL.revokeObjectURL(robotDownloadUrl);
+                    robotDownloadUrl = URL.createObjectURL(new Blob([f.buffer]));
+                    dl = robotDownloadUrl; dlName = f.name;
+                }
+            } catch (e) { /* ignorăm */ }
+        }
+        db.classList.toggle('hidden', !dl);
+        db.classList.toggle('inline-flex', !!dl);
+        if (dl) { db.href = dl; if (dlName) db.setAttribute('download', dlName); else db.removeAttribute('download'); }
+
+        if (!robotPublicViewer) robotPublicViewer = new RobotViewer(document.getElementById('robot-viewer'));
+        const sig = JSON.stringify(r);
+        if (sig !== robotPublicViewer.sig) {
+            robotPublicViewer.sig = sig;
+            robotPublicViewer.load(r);
+        }
+    }
+
+    function robotCmd(c) {
+        const v = robotPublicViewer;
+        if (!v || !v.renderer) return;
+        if (c === 'reset') v.resetView();
+        if (c === 'rotate') v.controls.autoRotate = !v.controls.autoRotate;
+        if (c === 'wire') v.setWireframe(!v.wire);
+        if (c === 'full') {
+            const w = document.getElementById('robot-viewer-wrap');
+            if (document.fullscreenElement) document.exitFullscreen();
+            else if (w.requestFullscreen) w.requestFullscreen();
+        }
+    }
+
+    /* ---------- Panoul de admin ---------- */
+    let robotAdminViewer = null;
+    let robotDraft = null; // fișier ales dar nesalvat încă
+
+    const rbEl = (id) => document.getElementById(id);
+
+    function robotReadForm() {
+        return {
+            enabled: rbEl('rb-enabled').checked,
+            name: rbEl('rb-name').value.trim(),
+            desc: rbEl('rb-desc').value.trim(),
+            specs: rbEl('rb-specs').value,
+            modelSource: rbEl('rb-source').value,
+            modelUrl: rbEl('rb-url').value.trim(),
+            modelColor: rbEl('rb-modelcolor').value,
+            zUp: rbEl('rb-zup').checked,
+            bg: rbEl('rb-bg').value,
+            autoRotate: rbEl('rb-autorotate').checked,
+            fusionLink: rbEl('rb-fusion').value.trim(),
+            sourceLink: rbEl('rb-sourcelink').value.trim(),
+            githubLink: rbEl('rb-github').value.trim(),
+            parts: {
+                chassis: rbEl('rb-c-chassis').value, wheels: rbEl('rb-c-wheels').value,
+                arm: rbEl('rb-c-arm').value, accent: rbEl('rb-c-accent').value,
+                width: +rbEl('rb-width').value, length: +rbEl('rb-length').value,
+                armOn: rbEl('rb-arm').checked, intakeOn: rbEl('rb-intake').checked
+            }
+        };
+    }
+
+    function robotFillForm(r) {
+        rbEl('rb-enabled').checked = !!r.enabled;
+        rbEl('rb-name').value = r.name || '';
+        rbEl('rb-desc').value = r.desc || '';
+        rbEl('rb-specs').value = r.specs || '';
+        rbEl('rb-source').value = r.modelSource || 'default';
+        rbEl('rb-url').value = r.modelUrl || '';
+        rbEl('rb-modelcolor').value = r.modelColor || '#9ca3af';
+        rbEl('rb-zup').checked = !!r.zUp;
+        rbEl('rb-bg').value = r.bg || '#06281a';
+        rbEl('rb-autorotate').checked = !!r.autoRotate;
+        rbEl('rb-fusion').value = r.fusionLink || '';
+        rbEl('rb-sourcelink').value = r.sourceLink || '';
+        rbEl('rb-github').value = r.githubLink || '';
+        const p = r.parts;
+        rbEl('rb-c-chassis').value = p.chassis; rbEl('rb-c-wheels').value = p.wheels;
+        rbEl('rb-c-arm').value = p.arm; rbEl('rb-c-accent').value = p.accent;
+        rbEl('rb-width').value = p.width; rbEl('rb-length').value = p.length;
+        rbEl('rb-arm').checked = !!p.armOn; rbEl('rb-intake').checked = !!p.intakeOn;
+        rbEl('rb-file-status').innerText = robotDraft ? 'Selectat: ' + robotDraft.name + ' (nesalvat)' : (r.modelFileName ? 'Salvat: ' + r.modelFileName : '');
+        robotToggleBoxes();
+    }
+
+    function robotToggleBoxes() {
+        const s = rbEl('rb-source').value;
+        rbEl('rb-box-url').classList.toggle('hidden', s !== 'url');
+        rbEl('rb-box-file').classList.toggle('hidden', s !== 'file');
+        rbEl('rb-box-default').classList.toggle('hidden', s !== 'default');
+        const m = rbEl('rb-box-model');
+        m.classList.toggle('hidden', s === 'default');
+        m.classList.toggle('grid', s !== 'default');
+    }
+
+    let robotPreviewTimer = null;
+    function robotPreview() {
+        robotToggleBoxes();
+        clearTimeout(robotPreviewTimer);
+        robotPreviewTimer = setTimeout(async () => {
+            if (!robotAdminViewer) return;
+            const cfg = robotReadForm();
+            await robotAdminViewer.load(cfg, cfg.modelSource === 'file' ? robotDraft : null);
+            rbEl('rb-status').innerText = robotAdminViewer.lastError || '';
+        }, 250);
+    }
+
+    function renderRobotAdmin() {
+        robotFillForm(appData.robot);
+        if (!robotAdminViewer) robotAdminViewer = new RobotViewer(rbEl('rb-admin-viewer'));
+        const sig = JSON.stringify(appData.robot) + (robotDraft ? robotDraft.name : '');
+        if (sig !== robotAdminViewer.sig) {
+            robotAdminViewer.sig = sig;
+            robotAdminViewer.load(appData.robot, appData.robot.modelSource === 'file' ? robotDraft : null)
+                .then(() => { rbEl('rb-status').innerText = robotAdminViewer.lastError || ''; });
+        }
+    }
+
+    function robotHandleFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!/\.(glb|gltf|stl|obj)$/i.test(file.name)) {
+            alert('Format nesuportat. Exportă din Fusion 360 ca STL sau OBJ (sau folosește un fișier GLB/GLTF).');
+            e.target.value = '';
+            return;
+        }
+        if (file.size > 40 * 1024 * 1024 && !confirm('Fișierul are peste 40 MB și poate încărca greu pagina. Continui?')) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            robotDraft = { name: file.name, buffer: reader.result };
+            rbEl('rb-source').value = 'file';
+            rbEl('rb-file-status').innerText = 'Selectat: ' + file.name + ' (nesalvat)';
+            robotPreview();
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    async function saveRobotSettings() {
+        const cfg = robotReadForm();
+        if (cfg.modelSource === 'url' && !cfg.modelUrl) { alert('Introdu URL-ul modelului sau alege altă sursă.'); return; }
+        cfg.modelFileName = appData.robot.modelFileName || '';
+        if (cfg.modelSource === 'file') {
+            if (robotDraft) {
+                try {
+                    await robotIdbSet('model', robotDraft);
+                    cfg.modelFileName = robotDraft.name;
+                    robotDraft = null;
+                } catch (err) {
+                    alert('Nu s-a putut salva fișierul în browser: ' + err.message);
+                    return;
+                }
+            } else if (!cfg.modelFileName) {
+                alert('Alege un fișier de model sau schimbă sursa.');
+                return;
+            }
+        }
+        appData.robot = Object.assign({}, appData.robot, cfg);
+        if (saveState()) alert('Robotul a fost salvat.');
+    }
+
+    function robotResetDefaults() {
+        if (!confirm('Resetezi setările robotului la valorile implicite?')) return;
+        robotDraft = null;
+        appData.robot = JSON.parse(JSON.stringify(ROBOT_DEFAULT));
+        saveState();
+    }
+
+    rbEl('rb-form').addEventListener('input', robotPreview);
+    rbEl('rb-form').addEventListener('change', robotPreview);
+
+    /* ---------- Integrare în funcțiile existente ---------- */
+    const _origRenderPublic = renderPublicContent;
+    renderPublicContent = function () { _origRenderPublic(); renderRobotPublic(); };
+    const _origRenderAdmin = renderAdminDashboard;
+    renderAdminDashboard = function () { _origRenderAdmin(); renderRobotAdmin(); };
+    </script>
+</body>
+</html>
